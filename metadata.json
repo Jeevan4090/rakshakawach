@@ -1,0 +1,6 @@
+{
+  "name": "Raksha Kavach",
+  "description": "Women's Safety Application providing emergency SOS, live location sharing, audio/video evidence recording, verified helplines, incident reporting, and safety assistance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
