@@ -83,6 +83,9 @@ googleServices { missingGoogleServicesStrategy = MissingGoogleServicesStrategy.W
 // Some unused dependencies are commented out below instead of being removed.
 // This makes it easy to add them back in the future if needed.
 dependencies {
+  implementation("androidx.credentials:credentials:1.3.0")
+ implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+ implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1") 
   implementation(platform(libs.androidx.compose.bom))
   implementation(platform(libs.firebase.bom))
   // implementation(libs.accompanist.permissions)

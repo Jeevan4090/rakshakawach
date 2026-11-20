@@ -42,6 +42,13 @@ class RakshaViewModel(application: Application) : AndroidViewModel(application) 
     val mediaHelper = MediaRecordingHelper(application)
     private val aiService = AiSafetyService()
 
+    // Google Auth state
+    private val _googleIdToken = MutableStateFlow<String?>(null)
+    val googleIdToken: StateFlow<String?> = _googleIdToken.asStateFlow()
+
+    private val _signedInEmail = MutableStateFlow<String?>(null)
+    val signedInEmail: StateFlow<String?> = _signedInEmail.asStateFlow()
+
     val contacts: StateFlow<List<TrustedContact>> = contactDao.getAllContacts()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -86,10 +93,19 @@ class RakshaViewModel(application: Application) : AndroidViewModel(application) 
     val isAiLoading: StateFlow<Boolean> = _isAiLoading.asStateFlow()
 
     init {
-        // Prepopulate standard starter contact if completely empty
         viewModelScope.launch {
             refreshLocation()
         }
+    }
+
+    fun setGoogleAuth(idToken: String, email: String) {
+        _googleIdToken.value = idToken
+        _signedInEmail.value = email
+    }
+
+    fun signOut() {
+        _googleIdToken.value = null
+        _signedInEmail.value = null
     }
 
     fun refreshLocation() {
@@ -271,12 +287,17 @@ class RakshaViewModel(application: Application) : AndroidViewModel(application) 
     // AI Safety Assistant Chat
     fun sendChatMessage(text: String) {
         if (text.isBlank()) return
+        val currentHistory = _chatMessages.value
         val userMsg = ChatMessage(sender = MessageSender.USER, text = text.trim())
-        _chatMessages.value = _chatMessages.value + userMsg
+        _chatMessages.value = currentHistory + userMsg
 
         _isAiLoading.value = true
         viewModelScope.launch {
-            val assistantResponse = aiService.getSafetyGuidance(userMsg.text)
+            val assistantResponse = aiService.getSafetyGuidance(
+                userQuery = userMsg.text,
+                history = currentHistory,
+                idToken = _googleIdToken.value
+            )
             _chatMessages.value = _chatMessages.value + assistantResponse
             _isAiLoading.value = false
         }

@@ -1,6 +1,6 @@
 package com.example.data
 
-import com.example.BuildConfig
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -28,39 +28,25 @@ enum class MessageSender {
 class AiSafetyService {
 
     private val client = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
+        .connectTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
         .build()
 
-    private val systemPrompt = """
-        You are "Raksha Assistant", an empathetic, calm, and knowledgeable women's safety AI guide within the Raksha Kavach Android application in India.
-        
-        Guidelines:
-        1. Always maintain a calm, supportive, non-judgmental tone. Never question or blame the user.
-        2. If the user indicates IMMEDIATE DANGER (e.g., being followed, actively attacked, trapped, or in immediate physical harm), instruct them FIRST to dial 112 (India's Emergency Response Support System), move toward a well-lit crowded public area, and do not confront the danger.
-        3. Explain verified Indian legal and reporting channels:
-           - 112: Unified Pan-India emergency (Police, Fire, Ambulance).
-           - 181: Women Helpline for domestic distress and counseling.
-           - 1091: Women Police Helpline.
-           - 1930 & cybercrime.gov.in: Financial cyber fraud, non-consensual image sharing, cyberstalking.
-           - SHe-Box (shebox.wcd.gov.in) & Internal Committee (IC) under POSH Act 2013 for workplace sexual harassment.
-           - 1098: Childline / POCSO Act reporting for minors under 18.
-        4. Explain practical evidence preservation (screenshots, exact timestamps, preserving chat logs, avoiding deletion, not confronting suspects).
-        5. Clearly remind users that you are an AI assistant and not a replacement for emergency responders, police, legal advocates, or doctors.
-        Keep responses concise, clear, and easy to read under stress.
-    """.trimIndent()
+    // Live Render HTTPS backend
+    private val backendBaseUrl = "https://rakshakavach-backend-k47b.onrender.com"
 
-    suspend fun getSafetyGuidance(userQuery: String): ChatMessage = withContext(Dispatchers.IO) {
+    suspend fun getSafetyGuidance(
+        userQuery: String,
+        history: List<ChatMessage> = emptyList(),
+        idToken: String? = null
+    ): ChatMessage = withContext(Dispatchers.IO) {
         val isUrgent = checkUrgentQuery(userQuery)
         val helpline = detectRecommendedHelpline(userQuery)
 
-        // Try Gemini API if key is available and configured
-        val apiKey = BuildConfig.GEMINI_API_KEY
-        val hasValidKey = apiKey.isNotBlank() && apiKey != "MY_GEMINI_API_KEY"
-
-        if (hasValidKey) {
+        if (!idToken.isNullOrBlank()) {
             try {
-                val apiResponse = callGeminiRest(apiKey, userQuery)
+                val apiResponse = callBackendChat(userQuery, history, idToken)
                 if (apiResponse.isNotBlank()) {
                     return@withContext ChatMessage(
                         sender = MessageSender.ASSISTANT,
@@ -69,9 +55,11 @@ class AiSafetyService {
                         recommendedHelpline = helpline
                     )
                 }
-            } catch (ignored: Exception) {
-                // Fallback to safety rule engine
+            } catch (e: Exception) {
+                Log.e("AiSafetyService", "Backend call failed", e)
             }
+        } else {
+            Log.w("AiSafetyService", "No Google ID token available; using offline safety guidance")
         }
 
         // Offline / Rule-Engine Fallback: instant, robust, accurate safety advice
@@ -82,6 +70,46 @@ class AiSafetyService {
             isUrgentEmergency = isUrgent,
             recommendedHelpline = helpline
         )
+    }
+
+    private fun callBackendChat(
+        userQuery: String,
+        history: List<ChatMessage>,
+        idToken: String
+    ): String {
+        val url = "$backendBaseUrl/api/v1/chat"
+
+        val messagesArray = JSONArray().apply {
+            history.takeLast(5).forEach { msg ->
+                put(JSONObject().apply {
+                    put("role", if (msg.sender == MessageSender.USER) "user" else "assistant")
+                    put("content", msg.text)
+                })
+            }
+            put(JSONObject().apply {
+                put("role", "user")
+                put("content", userQuery)
+            })
+        }
+
+        val jsonBody = JSONObject().apply {
+            put("messages", messagesArray)
+        }
+
+        val request = Request.Builder()
+            .url(url)
+            .addHeader("Authorization", "Bearer $idToken")
+            .post(jsonBody.toString().toRequestBody("application/json".toMediaType()))
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            val bodyString = response.body?.string() ?: ""
+            if (!response.isSuccessful) {
+                Log.e("AiSafetyService", "HTTP ${response.code}: $bodyString")
+                return ""
+            }
+            return JSONObject(bodyString).optString("reply", "")
+        }
     }
 
     private fun checkUrgentQuery(query: String): Boolean {
@@ -100,46 +128,6 @@ class AiSafetyService {
             q.contains("ambulance") || q.contains("doctor") || q.contains("hospital") || q.contains("bleeding") -> "108"
             else -> "112"
         }
-    }
-
-    private fun callGeminiRest(apiKey: String, userQuery: String): String {
-        val url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=$apiKey"
-
-        val jsonBody = JSONObject().apply {
-            put("contents", JSONArray().apply {
-                put(JSONObject().apply {
-                    put("parts", JSONArray().apply {
-                        put(JSONObject().put("text", userQuery))
-                    })
-                })
-            })
-            put("systemInstruction", JSONObject().apply {
-                put("parts", JSONArray().apply {
-                    put(JSONObject().put("text", systemPrompt))
-                })
-            })
-        }
-
-        val request = Request.Builder()
-            .url(url)
-            .post(jsonBody.toString().toRequestBody("application/json".toMediaType()))
-            .build()
-
-        client.newCall(request).execute().use { response ->
-            if (!response.isSuccessful) return ""
-            val bodyString = response.body?.string() ?: return ""
-            val json = JSONObject(bodyString)
-            val candidates = json.optJSONArray("candidates") ?: return ""
-            if (candidates.length() > 0) {
-                val first = candidates.getJSONObject(0)
-                val content = first.optJSONObject("content")
-                val parts = content?.optJSONArray("parts")
-                if (parts != null && parts.length() > 0) {
-                    return parts.getJSONObject(0).optString("text", "")
-                }
-            }
-        }
-        return ""
     }
 
     private fun generateRuleBasedSafetyResponse(query: String, isUrgent: Boolean): String {
@@ -189,10 +177,10 @@ class AiSafetyService {
 
             else -> """
 🛡️ RAKSHA KAVACH SAFETY ADVICE:
-• In any emergency, your immediate physical safety is paramount. Dial 112 for police, fire, or ambulance.
-• Women Helpline 181 is available 24x7 for counseling, domestic distress, and legal guidance.
-• Use Raksha Kavach's "Incident Report" section to privately document timestamps, details, and evidence for legal reference.
-• Note: I am an AI safety assistant. For active danger, always connect with emergency services (112) or medical professionals immediately.
+- In any emergency, your immediate physical safety is paramount. Dial 112 for police, fire, or ambulance.
+- Women Helpline 181 is available 24x7 for counseling, domestic distress, and legal guidance.
+- Use Raksha Kavach's "Incident Report" section to privately document timestamps, details, and evidence for legal reference.
+- Note: I am an AI safety assistant. For active danger, always connect with emergency services (112) or medical professionals immediately.
             """.trimIndent()
         }
     }

@@ -20,31 +20,31 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Campaign
-import androidx.compose.material.icons.filled.ChildCare
-import androidx.compose.material.icons.filled.DirectionsRun
-import androidx.compose.material.icons.filled.Emergency
-import androidx.compose.material.icons.filled.FolderShared
-import androidx.compose.material.icons.filled.Gavel
-import androidx.compose.material.icons.filled.LocalHospital
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.MyLocation
-import androidx.compose.material.icons.filled.People
-import androidx.compose.material.icons.filled.PhoneInTalk
-import androidx.compose.material.icons.filled.Psychology
-import androidx.compose.material.icons.filled.Security
-import androidx.compose.material.icons.filled.Shield
-import androidx.compose.material.icons.filled.Videocam
-import androidx.compose.material.icons.filled.Work
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.outlined.DirectionsRun
+import androidx.compose.material.icons.outlined.Campaign
+import androidx.compose.material.icons.outlined.ChildCare
+import androidx.compose.material.icons.outlined.Emergency
+import androidx.compose.material.icons.outlined.Gavel
+import androidx.compose.material.icons.outlined.LocalHospital
+import androidx.compose.material.icons.outlined.LocationOff
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Mic
+import androidx.compose.material.icons.outlined.MyLocation
+import androidx.compose.material.icons.outlined.People
+import androidx.compose.material.icons.outlined.PersonAdd
+import androidx.compose.material.icons.outlined.PhoneInTalk
+import androidx.compose.material.icons.outlined.Psychology
+import androidx.compose.material.icons.outlined.Security
+import androidx.compose.material.icons.outlined.Shield
+import androidx.compose.material.icons.outlined.Work
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,29 +56,53 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
 import com.example.data.EmergencyAlertHelper
 import com.example.ui.RakshaViewModel
-import com.example.ui.components.CategoryCard
-import com.example.ui.components.LocationStatusBar
 import com.example.ui.components.SosEmergencyButton
-import com.example.ui.theme.CrimsonLight
-import com.example.ui.theme.CrimsonPrimary
-import com.example.ui.theme.GoldPrimary
-import com.example.ui.theme.NavyDark
-import com.example.ui.theme.NavyMedium
+import com.example.ui.theme.GuideViolet
+import com.example.ui.theme.KavachTeal
 import com.example.ui.theme.SafeGreen
+import com.example.ui.theme.SageDeep
+import com.example.ui.theme.SageTint
+import com.example.ui.theme.SaffronDeep
+import com.example.ui.theme.SaffronTint
+import com.example.ui.theme.SosRed
+
+private data class HelpCategory(
+    val num: Int,
+    val title: String,
+    val subtitle: String,
+    val icon: ImageVector
+)
+
+private val urgentCategories = listOf(
+    HelpCategory(1, "I need help urgently", "Calls 112 and alerts your contacts with your location", Icons.Outlined.Emergency),
+    HelpCategory(2, "I'm being followed", "Shares your location quietly and finds the nearest police", Icons.AutoMirrored.Outlined.DirectionsRun),
+    HelpCategory(3, "I need an ambulance", "Calls 112 and 108, shows hospitals near you", Icons.Outlined.LocalHospital)
+)
+
+private val supportCategories = listOf(
+    HelpCategory(4, "Helplines and assistance", "Verified numbers: 112, 181, 1091, 1930, 1098", Icons.Outlined.PhoneInTalk),
+    HelpCategory(5, "I'm being harassed", "Document what happened and know your options", Icons.Outlined.Campaign),
+    HelpCategory(6, "Assault", "Medical help first, then your legal rights", Icons.Outlined.Gavel),
+    HelpCategory(7, "Workplace harassment", "POSH Act rights and filing with the Internal Committee", Icons.Outlined.Work),
+    HelpCategory(8, "Cybercrime", "Report fraud on 1930 and keep your evidence", Icons.Outlined.Security),
+    HelpCategory(9, "Child safety", "Childline 1098 and POCSO guidance", Icons.Outlined.ChildCare)
+)
 
 @Composable
 fun HomeScreen(
@@ -104,16 +128,12 @@ fun HomeScreen(
         val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
                 permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
         hasLocPermission = granted
-        if (granted) {
-            viewModel.refreshLocation()
-        }
+        if (granted) viewModel.refreshLocation()
     }
 
     LaunchedEffect(Unit) {
         hasLocPermission = viewModel.locationHelper.hasLocationPermission()
-        if (hasLocPermission) {
-            viewModel.refreshLocation()
-        }
+        if (hasLocPermission) viewModel.refreshLocation()
     }
 
     LazyColumn(
@@ -121,297 +141,392 @@ fun HomeScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .testTag("home_screen"),
-        contentPadding = PaddingValues(bottom = 32.dp)
+        contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 32.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Hero Header: Logo, Name & Tagline
         item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(NavyDark, NavyMedium)
-                        )
-                    )
-                    .padding(horizontal = 20.dp, vertical = 20.dp)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_raksha_logo),
-                            contentDescription = "Raksha Kavach Emblem",
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(CircleShape)
-                                .border(1.5.dp, GoldPrimary, CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Text(
-                                text = "RAKSHA KAVACH",
-                                color = Color.White,
-                                fontWeight = FontWeight.Black,
-                                fontSize = 22.sp,
-                                letterSpacing = 1.5.sp
-                            )
-                            Text(
-                                text = "WOMEN'S SAFETY APPLICATION",
-                                color = GoldPrimary,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 11.sp,
-                                letterSpacing = 1.2.sp
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    // Mandatory Tagline
-                    Text(
-                        text = "\"Women's Security Comes First — Jai Hind.\"",
-                        color = Color(0xFFF1F5F9),
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 13.sp,
-                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    // Location Status Bar
-                    LocationStatusBar(
-                        hasPermission = hasLocPermission,
-                        currentLocation = currentLocation,
-                        isLiveTracking = isLiveTracking,
-                        onRefreshLocation = { viewModel.refreshLocation() },
-                        onRequestPermission = {
-                            permissionLauncher.launch(
-                                arrayOf(
-                                    Manifest.permission.ACCESS_FINE_LOCATION,
-                                    Manifest.permission.ACCESS_COARSE_LOCATION
-                                )
-                            )
-                        },
-                        onClickBar = { onNavigateToLiveLocation() }
-                    )
-                }
-            }
-        }
-
-        // Visible Reassuring Safety Banner
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Row(
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_raksha_logo),
+                    contentDescription = null,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 14.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Shield,
-                        contentDescription = null,
-                        tint = CrimsonPrimary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
+                        .size(44.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
                     Text(
-                        text = "Your safety matters. Help is one tap away.",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        text = "Rakshakavach",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Text(
+                        text = "Women's security comes first — Jai Hind",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
         }
 
-        // Prominent SOS Emergency Button Section
         item {
-            SosEmergencyButton(
-                sosState = sosState,
-                onSosClick = {
-                    viewModel.startSosCountdown {
-                        onNavigateToCategory(1) // I Need Help Urgently
+            val locationRow: LocationRow = when {
+                !hasLocPermission -> LocationRow(
+                    Icons.Outlined.LocationOff, "Location is off", "Turn on",
+                    SaffronTint, SaffronDeep
+                )
+                isLiveTracking -> LocationRow(
+                    Icons.Outlined.MyLocation, "Sharing your live location", null,
+                    SageTint, SageDeep
+                )
+                currentLocation != null -> LocationRow(
+                    Icons.Outlined.LocationOn, "Location ready", null,
+                    MaterialTheme.colorScheme.surface, MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                else -> LocationRow(
+                    Icons.Outlined.LocationOn, "Finding your location…", null,
+                    MaterialTheme.colorScheme.surface, MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            StatusRow(
+                icon = locationRow.icon,
+                text = locationRow.text,
+                container = locationRow.container,
+                content = locationRow.content,
+                actionLabel = locationRow.action,
+                onClick = {
+                    if (!hasLocPermission) {
+                        permissionLauncher.launch(
+                            arrayOf(
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION
+                            )
+                        )
+                    } else {
+                        onNavigateToLiveLocation()
                     }
-                },
-                onCancelCountdown = { viewModel.cancelSosCountdown() },
-                onImmediateTrigger = {
-                    viewModel.triggerSosAlertImmediate()
-                    onNavigateToCategory(1)
-                },
-                onDirectCall112 = {
-                    EmergencyAlertHelper.dialNumber(context, "112")
                 }
             )
         }
 
-        // Quick-Access Action Grid
         item {
+            if (contacts.isEmpty()) {
+                StatusRow(
+                    icon = Icons.Outlined.PersonAdd,
+                    text = "Add a trusted contact so SOS has someone to reach",
+                    container = SaffronTint,
+                    content = SaffronDeep,
+                    actionLabel = "Add",
+                    onClick = onNavigateToContacts
+                )
+            } else {
+                StatusRow(
+                    icon = Icons.Outlined.Shield,
+                    text = "${contacts.size} trusted ${if (contacts.size == 1) "contact" else "contacts"} ready",
+                    container = SageTint,
+                    content = SageDeep,
+                    actionLabel = null,
+                    onClick = onNavigateToContacts
+                )
+            }
+        }
+
+        item {
+            Box(modifier = Modifier.padding(vertical = 8.dp)) {
+                SosEmergencyButton(
+                    sosState = sosState,
+                    onSosClick = {
+                        viewModel.startSosCountdown {
+                            onNavigateToCategory(1)
+                        }
+                    },
+                    onCancelCountdown = { viewModel.cancelSosCountdown() },
+                    onImmediateTrigger = {
+                        viewModel.triggerSosAlertImmediate()
+                        onNavigateToCategory(1)
+                    },
+                    onDirectCall112 = {
+                        EmergencyAlertHelper.dialNumber(context, "112")
+                    }
+                )
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                QuickActionTile(
+                    title = "Contacts",
+                    icon = Icons.Outlined.People,
+                    color = KavachTeal,
+                    onClick = onNavigateToContacts,
+                    modifier = Modifier.weight(1f),
+                    testTag = "quick_access_contacts"
+                )
+                QuickActionTile(
+                    title = "Location",
+                    icon = Icons.Outlined.MyLocation,
+                    color = KavachTeal,
+                    onClick = onNavigateToLiveLocation,
+                    modifier = Modifier.weight(1f),
+                    testTag = "quick_access_live_gps"
+                )
+                QuickActionTile(
+                    title = "Record",
+                    icon = Icons.Outlined.Mic,
+                    color = KavachTeal,
+                    onClick = onNavigateToEvidenceRecording,
+                    modifier = Modifier.weight(1f),
+                    testTag = "quick_access_record"
+                )
+                QuickActionTile(
+                    title = "Ask guide",
+                    icon = Icons.Outlined.Psychology,
+                    color = GuideViolet,
+                    onClick = onNavigateToAiAssistant,
+                    modifier = Modifier.weight(1f),
+                    testTag = "quick_access_ai"
+                )
+            }
+        }
+
+        item {
+            Text(
+                text = "Get help now",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+
+        items(urgentCategories, key = { it.num }) { item ->
+            UrgentCard(item = item, onClick = { onNavigateToCategory(item.num) })
+        }
+
+        item {
+            Text(
+                text = "More support",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+
+        item {
+            val shape = RoundedCornerShape(14.dp)
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .clip(shape)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .border(0.5.dp, MaterialTheme.colorScheme.outline, shape)
             ) {
-                Text(
-                    text = "QUICK SAFETY ACCESS",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    letterSpacing = 1.sp
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    QuickActionTile(
-                        title = "Contacts (${contacts.size})",
-                        icon = Icons.Default.People,
-                        color = Color(0xFF2563EB),
-                        onClick = onNavigateToContacts,
-                        modifier = Modifier.weight(1f),
-                        testTag = "quick_access_contacts"
-                    )
-                    QuickActionTile(
-                        title = "Live GPS",
-                        icon = Icons.Default.MyLocation,
-                        color = Color(0xFF0284C7),
-                        onClick = onNavigateToLiveLocation,
-                        modifier = Modifier.weight(1f),
-                        testTag = "quick_access_live_gps"
-                    )
-                    QuickActionTile(
-                        title = "Audio/Video",
-                        icon = Icons.Default.Mic,
-                        color = CrimsonPrimary,
-                        onClick = onNavigateToEvidenceRecording,
-                        modifier = Modifier.weight(1f),
-                        testTag = "quick_access_record"
-                    )
-                    QuickActionTile(
-                        title = "AI Guide",
-                        icon = Icons.Default.Psychology,
-                        color = Color(0xFF7C3AED),
-                        onClick = onNavigateToAiAssistant,
-                        modifier = Modifier.weight(1f),
-                        testTag = "quick_access_ai"
-                    )
-                }
-            }
-        }
-
-        // 9 Emergency Categories Section
-        item {
-            Text(
-                text = "EMERGENCY ASSISTANCE CATEGORIES",
-                fontWeight = FontWeight.Bold,
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                letterSpacing = 1.sp,
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
-            )
-        }
-
-        val categories = listOf(
-            Triple(1, "I Need Help Urgently", "Immediate 112 emergency call, GPS blast alert to contacts, panic beacon"),
-            Triple(2, "I Am Being Followed", "Real-time location sharing, discreet SOS, safe route tips, nearest police"),
-            Triple(3, "I Need an Ambulance", "Dial 112 & 108 ambulance, share medical emergency details, nearby hospitals"),
-            Triple(4, "I Need Assistance / Helplines", "Verified national & regional helpline directory (112, 181, 1091, 1930, 1098)"),
-            Triple(5, "I Am Being Harassed", "Document incident, alert loved ones, legal guidance, secure offline notes"),
-            Triple(6, "Case of Assault", "Urgent physical safety & medical aid first, 112, supportive legal rights"),
-            Triple(7, "Workplace Sexual Harassment", "POSH Act rights, Internal Committee (IC), SHe-Box portal reporting link"),
-            Triple(8, "Cybercrime Help", "Call 1930 for financial cyber fraud, cybercrime.gov.in, evidence checklist"),
-            Triple(9, "Child Safety / POCSO Help", "Call 1098 Childline, 112, POCSO legal guidelines, child privacy protection")
-        )
-
-        items(categories.size) { index ->
-            val (num, title, subtitle) = categories[index]
-            val icon = when (num) {
-                1 -> Icons.Default.Emergency
-                2 -> Icons.Default.DirectionsRun
-                3 -> Icons.Default.LocalHospital
-                4 -> Icons.Default.PhoneInTalk
-                5 -> Icons.Default.Campaign
-                6 -> Icons.Default.Gavel
-                7 -> Icons.Default.Work
-                8 -> Icons.Default.Security
-                else -> Icons.Default.ChildCare
-            }
-            val accentColor = when (num) {
-                1 -> CrimsonPrimary
-                2 -> Color(0xFFEA580C)
-                3 -> Color(0xFFE11D48)
-                4 -> Color(0xFF0284C7)
-                5 -> Color(0xFF9333EA)
-                6 -> CrimsonPrimary
-                7 -> Color(0xFF4F46E5)
-                8 -> Color(0xFF0D9488)
-                else -> Color(0xFFD97706)
-            }
-
-            CategoryCard(
-                number = num,
-                title = title,
-                subtitle = subtitle,
-                icon = icon,
-                accentColor = accentColor,
-                onClick = { onNavigateToCategory(num) },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 5.dp)
-            )
-        }
-
-        // Saved Reports Access Card
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                    .clickable { onNavigateToReports() }
-                    .testTag("nav_saved_reports_card"),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(14.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.FolderShared,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Confidential Incident Vault",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
-                        )
-                        Text(
-                            text = "Review encrypted offline incident notes & evidence",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                supportCategories.forEachIndexed { index, category ->
+                    SupportRow(category = category, onClick = { onNavigateToCategory(category.num) })
+                    if (index < supportCategories.lastIndex) {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 68.dp)
+                                .fillMaxWidth()
+                                .height(0.5.dp)
+                                .background(MaterialTheme.colorScheme.outline)
                         )
                     }
                 }
             }
         }
+
+        item {
+            val shape = RoundedCornerShape(14.dp)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+                    .clip(shape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .clickable(role = Role.Button, onClick = onNavigateToReports)
+                    .padding(16.dp)
+                    .testTag("nav_saved_reports_card"),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Lock,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.size(22.dp)
+                )
+                Spacer(modifier = Modifier.width(14.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Incident vault",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Text(
+                        text = "Encrypted notes and evidence, stored on this phone",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
+private data class LocationRow(
+    val icon: ImageVector,
+    val text: String,
+    val action: String?,
+    val container: Color,
+    val content: Color
+)
+
+@Composable
+private fun StatusRow(
+    icon: ImageVector,
+    text: String,
+    container: Color,
+    content: Color,
+    actionLabel: String?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val shape = RoundedCornerShape(12.dp)
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(container)
+            .border(0.5.dp, MaterialTheme.colorScheme.outline, shape)
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = content,
+            modifier = Modifier.size(20.dp)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(
+            text = text,
+            color = content,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.weight(1f)
+        )
+        if (actionLabel != null) {
+            Text(
+                text = actionLabel,
+                color = content,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
+
+@Composable
+private fun IconBadge(icon: ImageVector, tint: Color, size: Dp) {
+    Box(
+        modifier = Modifier
+            .size(size)
+            .clip(CircleShape)
+            .background(tint.copy(alpha = 0.12f)),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = tint,
+            modifier = Modifier.size(size * 0.5f)
+        )
+    }
+}
+
+@Composable
+private fun UrgentCard(item: HelpCategory, onClick: () -> Unit) {
+    val shape = RoundedCornerShape(14.dp)
+    val accent = if (item.num == 1) SosRed else KavachTeal
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surface)
+            .border(0.5.dp, MaterialTheme.colorScheme.outline, shape)
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconBadge(icon = item.icon, tint = accent, size = 44.dp)
+        Spacer(modifier = Modifier.width(14.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = item.title,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                text = item.subtitle,
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
+private fun SupportRow(category: HelpCategory, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconBadge(icon = category.icon, tint = KavachTeal, size = 40.dp)
+        Spacer(modifier = Modifier.width(14.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = category.title,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                text = category.subtitle,
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -424,35 +539,26 @@ fun QuickActionTile(
     modifier: Modifier = Modifier,
     testTag: String
 ) {
-    Card(
+    val shape = RoundedCornerShape(14.dp)
+    Column(
         modifier = modifier
-            .clickable { onClick() }
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surface)
+            .border(0.5.dp, MaterialTheme.colorScheme.outline, shape)
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(vertical = 14.dp, horizontal = 4.dp)
             .testTag(testTag),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.12f))
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp, horizontal = 6.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = title,
-                tint = color,
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = title,
-                fontWeight = FontWeight.Bold,
-                fontSize = 11.sp,
-                color = color,
-                textAlign = TextAlign.Center,
-                maxLines = 1
-            )
-        }
+        IconBadge(icon = icon, tint = color, size = 40.dp)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = title,
+            fontWeight = FontWeight.Medium,
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center,
+            maxLines = 1
+        )
     }
 }

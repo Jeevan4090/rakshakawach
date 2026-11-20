@@ -1,34 +1,58 @@
 package com.example.ui.theme
 
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
-// Raksha Kavach Brand Palette
-val NavyDark = Color(0xFF0D1B2A)
-val NavyMedium = Color(0xFF1B263B)
-val NavyCard = Color(0xFF24344D)
-val NavyLight = Color(0xFF415A77)
-val SlateAccent = Color(0xFF778DA9)
-val SurfaceCream = Color(0xFFF7F9FC)
-val SurfaceCardLight = Color(0xFFFFFFFF)
+val KavachTeal = Color(0xFF1F6F78)
+val KavachInk = Color(0xFF123F46)
+val TealTint = Color(0xFFCFE3E4)
+val Mist = Color(0xFFF3F7F6)
+val DawnSand = Color(0xFFEFE6D8)
+val Sage = Color(0xFF6FAE95)
+val SageTint = Color(0xFFDDEFE7)
+val SageDeep = Color(0xFF1E5A47)
+val Saffron = Color(0xFFE3A53A)
+val SaffronTint = Color(0xFFFBEFD6)
+val SaffronDeep = Color(0xFF6B4A0F)
+val GuideViolet = Color(0xFF6F66B8)
+val VioletTint = Color(0xFFE4E1F4)
+val VioletDeep = Color(0xFF3F3875)
+val SosRed = Color(0xFFC73B3B)
+val SosTint = Color(0xFFF8E1E1)
+val InkSecondary = Color(0xFF4F7075)
+val Hairline = Color(0xFFD5DEDD)
+val CrimsonDark = Color(0xFF9E2B2B)
 
-// Emergency / Alert Crimson
-val CrimsonPrimary = Color(0xFFD90429)
-val CrimsonDark = Color(0xFF9E001B)
-val CrimsonLight = Color(0xFFEF233C)
-val CrimsonContainer = Color(0xFFFFDAD6)
-val OnCrimsonContainer = Color(0xFF410002)
+val NavyDark = KavachInk
+val NavyMedium = KavachTeal
+val GoldPrimary = Saffron
+val CrimsonPrimary = SosRed
+val CrimsonLight = Color(0xFFE26B6B)
+val SafeGreen = Sage
 
-// Protective Gold / Amber
-val GoldPrimary = Color(0xFFE5A93C)
-val GoldContainer = Color(0xFFFFF1D6)
-val OnGoldContainer = Color(0xFF523B00)
-
-// Safe Green
-val SafeGreen = Color(0xFF10B981)
-val SafeGreenContainer = Color(0xFFD1FAE5)
-
-// Neutral
-val NeutralTextDark = Color(0xFF0F172A)
-val NeutralTextSecondary = Color(0xFF475569)
-val NeutralTextLight = Color(0xFFF8FAFC)
-val NeutralBorder = Color(0xFFE2E8F0)
+val RakshaLightColors = lightColorScheme(
+    primary = KavachTeal,
+    onPrimary = Color.White,
+    primaryContainer = TealTint,
+    onPrimaryContainer = KavachInk,
+    secondary = Sage,
+    onSecondary = SageDeep,
+    secondaryContainer = SageTint,
+    onSecondaryContainer = SageDeep,
+    tertiary = GuideViolet,
+    onTertiary = Color.White,
+    tertiaryContainer = VioletTint,
+    onTertiaryContainer = VioletDeep,
+    error = SosRed,
+    onError = Color.White,
+    errorContainer = SosTint,
+    onErrorContainer = SosRed,
+    background = Mist,
+    onBackground = KavachInk,
+    surface = Color.White,
+    onSurface = KavachInk,
+    surfaceVariant = DawnSand,
+    onSurfaceVariant = InkSecondary,
+    outline = Hairline,
+    outlineVariant = Hairline
+)

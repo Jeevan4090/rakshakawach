@@ -1,7 +1,10 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,22 +17,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarBorder
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Call
+import androidx.compose.material.icons.outlined.DeleteOutline
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.People
+import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -38,6 +39,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -51,21 +53,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.EmergencyAlertHelper
 import com.example.data.entity.TrustedContact
 import com.example.ui.RakshaViewModel
 import com.example.ui.components.RakshaTopAppBar
-import com.example.ui.theme.CrimsonPrimary
-import com.example.ui.theme.GoldPrimary
+import com.example.ui.theme.KavachTeal
+import com.example.ui.theme.SaffronDeep
+import com.example.ui.theme.SaffronTint
+import com.example.ui.theme.Saffron
+import com.example.ui.theme.TealTint
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactsScreen(
     viewModel: RakshaViewModel,
@@ -74,22 +82,24 @@ fun ContactsScreen(
     val context = LocalContext.current
     val contacts by viewModel.contacts.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
+    var showTestDialog by remember { mutableStateOf(false) }
+    var pendingDelete by remember { mutableStateOf<TrustedContact?>(null) }
 
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = "Trusted Emergency Contacts",
+                title = "Trusted contacts",
                 onBackClick = onNavigateBack
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
-                containerColor = CrimsonPrimary,
+                containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color.White,
                 modifier = Modifier.testTag("add_contact_fab")
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Contact")
+                Icon(Icons.Outlined.Add, contentDescription = "Add contact")
             }
         }
     ) { padding ->
@@ -99,73 +109,63 @@ fun ContactsScreen(
                 .padding(padding)
                 .background(MaterialTheme.colorScheme.background)
                 .testTag("contacts_screen"),
-            contentPadding = PaddingValues(16.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 96.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Column(modifier = Modifier.padding(14.dp)) {
-                        Text(
-                            text = "🛡️ Emergency Broadcast Network",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "When you trigger SOS, these trusted contacts receive an SMS containing your emergency message, exact GPS coordinates, and live Google Maps link. The Primary contact is prioritized.",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            lineHeight = 17.sp
-                        )
-                    }
-                }
+                NoticeCard(
+                    icon = Icons.Outlined.Info,
+                    text = "When you send an SOS, these contacts get an SMS with your message, your coordinates, and a live Google Maps link. Your primary contact is alerted first.",
+                    container = MaterialTheme.colorScheme.surfaceVariant,
+                    content = MaterialTheme.colorScheme.onBackground
+                )
             }
 
             if (contacts.isEmpty()) {
                 item {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 20.dp),
-                        shape = RoundedCornerShape(14.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-                    ) {
+                    SurfaceCard(modifier = Modifier.padding(top = 12.dp)) {
                         Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(24.dp),
+                            modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(48.dp)
-                            )
-                            Spacer(modifier = Modifier.height(10.dp))
+                            Box(
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .clip(CircleShape)
+                                    .background(TealTint),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.People,
+                                    contentDescription = null,
+                                    tint = KavachTeal,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(14.dp))
                             Text(
-                                text = "No Contacts Added Yet",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
+                                text = "No contacts yet",
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 17.sp,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Add parents, siblings, or friends so Raksha Kavach can alert them instantly in danger.",
-                                fontSize = 12.sp,
+                                text = "Add family or friends who can respond quickly if you send an SOS.",
+                                fontSize = 13.sp,
+                                lineHeight = 19.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                                textAlign = TextAlign.Center
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(18.dp))
                             Button(
                                 onClick = { showAddDialog = true },
-                                colors = ButtonDefaults.buttonColors(containerColor = CrimsonPrimary),
-                                modifier = Modifier.testTag("add_first_contact_button")
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(48.dp)
+                                    .testTag("add_first_contact_button")
                             ) {
-                                Text("+ Add Emergency Contact")
+                                Text("Add a contact")
                             }
                         }
                     }
@@ -178,21 +178,20 @@ fun ContactsScreen(
                         onTogglePrimary = {
                             viewModel.updateContact(contact.copy(isPrimary = !contact.isPrimary))
                         },
-                        onDelete = { viewModel.deleteContact(contact) }
+                        onDelete = { pendingDelete = contact }
                     )
                 }
 
                 item {
-                    Spacer(modifier = Modifier.height(8.dp))
                     OutlinedButton(
-                        onClick = {
-                            viewModel.triggerSosAlertImmediate("TEST SOS: Testing Raksha Kavach emergency alert broadcast.")
-                        },
+                        onClick = { showTestDialog = true },
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(top = 8.dp)
+                            .height(48.dp)
                             .testTag("test_broadcast_button")
                     ) {
-                        Text("Send Test Emergency Alert to Contacts")
+                        Text("Send a test alert")
                     }
                 }
             }
@@ -208,6 +207,54 @@ fun ContactsScreen(
             }
         )
     }
+
+    pendingDelete?.let { contact ->
+        AlertDialog(
+            onDismissRequest = { pendingDelete = null },
+            title = { Text("Remove ${contact.name}?") },
+            text = { Text("They will stop receiving your SOS alerts.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.deleteContact(contact)
+                        pendingDelete = null
+                    }
+                ) {
+                    Text("Remove", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingDelete = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    if (showTestDialog) {
+        AlertDialog(
+            onDismissRequest = { showTestDialog = false },
+            title = { Text("Send a test alert?") },
+            text = {
+                Text("This sends a real SMS with your location to all ${contacts.size} of your contacts. The message says it's a test.")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.triggerSosAlertImmediate("TEST: This is a test of the Rakshakavach alert. I'm safe, no action needed.")
+                        showTestDialog = false
+                    }
+                ) {
+                    Text("Send test")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showTestDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -217,86 +264,116 @@ fun ContactCardItem(
     onTogglePrimary: () -> Unit,
     onDelete: () -> Unit
 ) {
-    Card(
+    val shape = RoundedCornerShape(14.dp)
+    val initials = contact.name
+        .trim()
+        .split(" ")
+        .filter { it.isNotBlank() }
+        .take(2)
+        .joinToString("") { it.first().uppercase() }
+        .ifEmpty { "?" }
+
+    Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surface)
+            .border(0.5.dp, MaterialTheme.colorScheme.outline, shape)
+            .padding(start = 14.dp, end = 4.dp, top = 10.dp, bottom = 10.dp)
             .testTag("contact_item_${contact.id}"),
-        shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(14.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .size(42.dp)
+                .clip(CircleShape)
+                .background(TealTint),
+            contentAlignment = Alignment.Center
         ) {
-            IconButton(
-                onClick = onTogglePrimary,
-                modifier = Modifier.testTag("toggle_primary_${contact.id}")
-            ) {
-                Icon(
-                    imageVector = if (contact.isPrimary) Icons.Default.Star else Icons.Default.StarBorder,
-                    contentDescription = "Primary Contact",
-                    tint = if (contact.isPrimary) GoldPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+            Text(
+                text = initials,
+                color = KavachTeal,
+                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp
+            )
+        }
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = contact.name,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false)
                 )
-            }
-
-            Spacer(modifier = Modifier.width(6.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = contact.name,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    if (contact.isPrimary) {
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Card(
-                            colors = CardDefaults.cardColors(containerColor = GoldPrimary.copy(alpha = 0.2f)),
-                            shape = RoundedCornerShape(4.dp)
-                        ) {
-                            Text(
-                                text = "PRIMARY",
-                                color = GoldPrimary,
-                                fontWeight = FontWeight.Black,
-                                fontSize = 9.sp,
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                            )
-                        }
+                if (contact.isPrimary) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(SaffronTint)
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    ) {
+                        Text(
+                            text = "Primary",
+                            color = SaffronDeep,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 11.sp
+                        )
                     }
                 }
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = "${contact.relationship} • ${contact.phone}",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
+            Text(
+                text = "${contact.relationship} · ${contact.phone}",
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
 
-            IconButton(
-                onClick = onCall,
-                modifier = Modifier.testTag("call_contact_btn_${contact.id}")
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Call,
-                    contentDescription = "Call",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
+        IconButton(
+            onClick = onTogglePrimary,
+            modifier = Modifier
+                .size(40.dp)
+                .testTag("toggle_primary_${contact.id}")
+        ) {
+            Icon(
+                imageVector = if (contact.isPrimary) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                contentDescription = if (contact.isPrimary) "Remove as primary contact" else "Make primary contact",
+                tint = if (contact.isPrimary) Saffron else MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
 
-            IconButton(
-                onClick = onDelete,
-                modifier = Modifier.testTag("delete_contact_btn_${contact.id}")
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete",
-                    tint = MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
-                )
-            }
+        IconButton(
+            onClick = onCall,
+            modifier = Modifier
+                .size(40.dp)
+                .testTag("call_contact_btn_${contact.id}")
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Call,
+                contentDescription = "Call ${contact.name}",
+                tint = KavachTeal
+            )
+        }
+
+        IconButton(
+            onClick = onDelete,
+            modifier = Modifier
+                .size(40.dp)
+                .testTag("delete_contact_btn_${contact.id}")
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.DeleteOutline,
+                contentDescription = "Remove ${contact.name}",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
@@ -309,33 +386,46 @@ fun AddContactDialog(
 ) {
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
-    var relationship by remember { mutableStateOf("Family") }
+    var relationship by remember { mutableStateOf("Friend") }
     var isPrimary by remember { mutableStateOf(false) }
+    var nameError by remember { mutableStateOf(false) }
+    var phoneError by remember { mutableStateOf(false) }
+    var expandedRel by remember { mutableStateOf(false) }
 
     val relationships = listOf("Mother", "Father", "Sister", "Brother", "Guardian", "Friend", "Partner", "Colleague", "Other")
-    var expandedRel by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Trusted Contact", fontWeight = FontWeight.Bold) },
+        title = { Text("Add a trusted contact", fontWeight = FontWeight.Medium) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                OutlinedTextField(
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                FormField(
                     value = name,
-                    onValueChange = { name = it },
-                    label = { Text("Contact Name") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth().testTag("add_contact_name_input")
+                    onValueChange = {
+                        name = it
+                        nameError = false
+                    },
+                    label = "Name",
+                    error = if (nameError) "Enter a name" else null,
+                    modifier = Modifier.testTag("add_contact_name_input")
                 )
 
                 OutlinedTextField(
                     value = phone,
-                    onValueChange = { phone = it },
-                    label = { Text("Mobile Number (with country code)") },
+                    onValueChange = {
+                        phone = it
+                        phoneError = false
+                    },
+                    label = { Text("Mobile number") },
+                    placeholder = { Text("+91 98765 43210") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     singleLine = true,
-                    placeholder = { Text("+91 98765 43210") },
-                    modifier = Modifier.fillMaxWidth().testTag("add_contact_phone_input")
+                    isError = phoneError,
+                    supportingText = { if (phoneError) Text("Enter a valid mobile number") },
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("add_contact_phone_input")
                 )
 
                 ExposedDropdownMenuBox(
@@ -348,7 +438,10 @@ fun AddContactDialog(
                         readOnly = true,
                         label = { Text("Relationship") },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRel) },
-                        modifier = Modifier.menuAnchor(androidx.compose.material3.MenuAnchorType.PrimaryNotEditable).fillMaxWidth()
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                            .fillMaxWidth()
                     )
                     ExposedDropdownMenu(
                         expanded = expandedRel,
@@ -367,31 +460,34 @@ fun AddContactDialog(
                 }
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(role = Role.Checkbox) { isPrimary = !isPrimary },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    androidx.compose.material3.Checkbox(
+                    Checkbox(
                         checked = isPrimary,
-                        onCheckedChange = { isPrimary = it },
-                        modifier = Modifier.testTag("add_contact_primary_checkbox")
+                        onCheckedChange = null,
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .testTag("add_contact_primary_checkbox")
                     )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("Set as Primary Emergency Contact", fontSize = 12.sp)
+                    Text("Make this my primary contact", fontSize = 14.sp)
                 }
             }
         },
         confirmButton = {
             Button(
                 onClick = {
-                    if (name.isNotBlank() && phone.isNotBlank()) {
-                        onConfirm(name, phone, relationship, isPrimary)
+                    nameError = name.isBlank()
+                    phoneError = phone.count { it.isDigit() } < 10
+                    if (!nameError && !phoneError) {
+                        onConfirm(name.trim(), phone.trim(), relationship, isPrimary)
                     }
                 },
-                enabled = name.isNotBlank() && phone.isNotBlank(),
-                colors = ButtonDefaults.buttonColors(containerColor = CrimsonPrimary),
                 modifier = Modifier.testTag("save_contact_dialog_button")
             ) {
-                Text("Save Contact")
+                Text("Save contact")
             }
         },
         dismissButton = {

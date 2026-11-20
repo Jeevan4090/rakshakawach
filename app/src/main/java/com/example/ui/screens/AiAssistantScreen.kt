@@ -1,8 +1,8 @@
 package com.example.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -22,7 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -36,12 +35,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,10 +54,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.ChatMessage
 import com.example.data.EmergencyAlertHelper
+import com.example.data.GoogleAuthHelper
 import com.example.data.MessageSender
 import com.example.ui.RakshaViewModel
 import com.example.ui.components.RakshaTopAppBar
 import com.example.ui.theme.CrimsonPrimary
+import kotlinx.coroutines.launch
 
 @Composable
 fun AiAssistantScreen(
@@ -64,9 +67,12 @@ fun AiAssistantScreen(
     onNavigateBack: () -> Unit
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val messages by viewModel.chatMessages.collectAsState()
     val isLoading by viewModel.isAiLoading.collectAsState()
+    val signedInEmail by viewModel.signedInEmail.collectAsState()
     var inputText by remember { mutableStateOf("") }
+    var isSigningIn by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
 
     val quickPrompts = listOf(
@@ -123,6 +129,60 @@ fun AiAssistantScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 15.sp
                     )
+                }
+            }
+
+            // Google Sign-In Status Bar (for Live Backend AI)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 2.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                if (signedInEmail == null) {
+                    Text(
+                        text = "Offline mode (sign in for Live AI)",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Button(
+                        onClick = {
+                            if (!isSigningIn) {
+                                isSigningIn = true
+                                scope.launch {
+                                    val auth = GoogleAuthHelper.signIn(context)
+                                    isSigningIn = false
+                                    if (auth != null) {
+                                        viewModel.setGoogleAuth(auth.idToken, auth.email)
+                                        Toast.makeText(context, "Signed in as ${auth.email}", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        Toast.makeText(context, "Google Sign-In cancelled or failed", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        },
+                        enabled = !isSigningIn,
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = if (isSigningIn) "Signing in..." else "Sign in with Google",
+                            fontSize = 11.sp
+                        )
+                    }
+                } else {
+                    Text(
+                        text = "Live AI active ($signedInEmail)",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Medium
+                    )
+                    TextButton(
+                        onClick = { viewModel.signOut() },
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+                    ) {
+                        Text("Sign out", fontSize = 11.sp)
+                    }
                 }
             }
 
