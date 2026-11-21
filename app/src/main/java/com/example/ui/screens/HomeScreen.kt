@@ -40,12 +40,15 @@ import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material.icons.outlined.PhoneInTalk
 import androidx.compose.material.icons.outlined.Psychology
+import androidx.compose.material.icons.outlined.School
 import androidx.compose.material.icons.outlined.Security
 import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.Work
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -56,6 +59,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -75,7 +79,6 @@ import com.example.ui.RakshaViewModel
 import com.example.ui.components.SosEmergencyButton
 import com.example.ui.theme.GuideViolet
 import com.example.ui.theme.KavachTeal
-import com.example.ui.theme.SafeGreen
 import com.example.ui.theme.SageDeep
 import com.example.ui.theme.SageTint
 import com.example.ui.theme.SaffronDeep
@@ -122,6 +125,8 @@ fun HomeScreen(
     val contacts by viewModel.contacts.collectAsState()
 
     var hasLocPermission by remember { mutableStateOf(viewModel.locationHelper.hasLocationPermission()) }
+    var showBetaPadhaoDialog by remember { mutableStateOf(false) }
+
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -295,6 +300,12 @@ fun HomeScreen(
         }
 
         item {
+            BetaPadhaoBannerCard(
+                onClick = { showBetaPadhaoDialog = true }
+            )
+        }
+
+        item {
             Text(
                 text = "Get help now",
                 fontSize = 16.sp,
@@ -383,6 +394,48 @@ fun HomeScreen(
             }
         }
     }
+
+    if (showBetaPadhaoDialog) {
+        AlertDialog(
+            onDismissRequest = { showBetaPadhaoDialog = false },
+            title = {
+                Text(
+                    text = "Beta Padhao • Beti Bachao",
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Text(
+                        text = "Educate Sons with Respect • Empower Daughters with Strength",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 14.sp,
+                        color = KavachTeal
+                    )
+                    Text(
+                        text = "• One Stop Centre (Sakhi): Medical, legal, and shelter support for women across India.\n" +
+                               "• Women Helpline (181): 24x7 emergency and non-emergency support.\n" +
+                               "• Beti Bachao Beti Padhao: National initiative for girl child education and gender equality.",
+                        fontSize = 13.sp,
+                        lineHeight = 19.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = "Pledge: I commit to treating every woman and girl with dignity, speaking up against disrespect, and building safer spaces at home and in public.",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showBetaPadhaoDialog = false }) {
+                    Text("I Pledge", color = KavachTeal, fontWeight = FontWeight.SemiBold)
+                }
+            }
+        )
+    }
 }
 
 private data class LocationRow(
@@ -453,6 +506,69 @@ private fun IconBadge(icon: ImageVector, tint: Color, size: Dp) {
             contentDescription = null,
             tint = tint,
             modifier = Modifier.size(size * 0.5f)
+        )
+    }
+}
+
+@Composable
+private fun BetaPadhaoBannerCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val shape = RoundedCornerShape(16.dp)
+    val gradient = Brush.linearGradient(
+        colors = listOf(
+            Color(0xFF155259),
+            KavachTeal,
+            Color(0xFF28828C)
+        )
+    )
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(gradient)
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(18.dp)
+            .testTag("beta_padhao_banner"),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .clip(RoundedCornerShape(50))
+                .background(Color.White.copy(alpha = 0.16f))
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.School,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = "Beta Padhao • Beti Bachao",
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
+        Text(
+            text = "Educate Sons with Respect • Empower Daughters with Strength",
+            color = Color.White,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            lineHeight = 22.sp
+        )
+
+        Text(
+            text = "Government Schemes, Sensitization & Pledge →",
+            color = Color.White.copy(alpha = 0.88f),
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Medium
         )
     }
 }
