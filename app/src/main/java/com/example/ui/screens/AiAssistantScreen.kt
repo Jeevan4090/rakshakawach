@@ -101,7 +101,7 @@ fun AiAssistantScreen(
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = "Chat with Raksha Assistant",
+                title = "Chat with Rakshak Assistant",
                 onBackClick = onNavigateBack
             )
         }
