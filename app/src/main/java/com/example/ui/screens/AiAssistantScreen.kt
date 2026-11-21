@@ -75,6 +75,15 @@ fun AiAssistantScreen(
     var isSigningIn by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
 
+    LaunchedEffect(Unit) {
+        if (signedInEmail == null) {
+            val saved = GoogleAuthHelper.getSavedUser(context)
+            if (saved != null) {
+                viewModel.setGoogleAuth(saved.idToken, saved.email)
+            }
+        }
+    }
+
     val quickPrompts = listOf(
         "Someone is following me.",
         "I am receiving threatening messages.",
@@ -178,7 +187,10 @@ fun AiAssistantScreen(
                         fontWeight = FontWeight.Medium
                     )
                     TextButton(
-                        onClick = { viewModel.signOut() },
+                        onClick = {
+                            GoogleAuthHelper.signOut(context)
+                            viewModel.signOut()
+                        },
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
                     ) {
                         Text("Sign out", fontSize = 11.sp)

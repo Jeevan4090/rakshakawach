@@ -9,7 +9,24 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Map
+import androidx.compose.material.icons.outlined.People
+import androidx.compose.material.icons.outlined.Shield
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,6 +35,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ui.RakshaViewModel
 import com.example.ui.screens.AiAssistantScreen
@@ -35,6 +57,7 @@ import com.example.ui.screens.IncidentReportsListScreen
 import com.example.ui.screens.LiveLocationScreen
 import com.example.ui.screens.UrgentHelpScreen
 import com.example.ui.screens.WorkplaceHarassmentScreen
+import com.example.ui.theme.GuideViolet
 import com.example.ui.theme.RakshaKavachTheme
 
 enum class Screen {
@@ -54,6 +77,21 @@ enum class Screen {
     AI_ASSISTANT,
     REPORTS
 }
+
+private data class BottomNavItem(
+    val screen: Screen,
+    val label: String,
+    val icon: ImageVector,
+    val selectedIcon: ImageVector
+)
+
+private val bottomNavItems = listOf(
+    BottomNavItem(Screen.HOME, "Home", Icons.Outlined.Home, Icons.Filled.Home),
+    BottomNavItem(Screen.LIVE_LOCATION, "Map", Icons.Outlined.Map, Icons.Filled.Map),
+    BottomNavItem(Screen.CONTACTS, "Contacts", Icons.Outlined.People, Icons.Filled.People),
+    BottomNavItem(Screen.AI_ASSISTANT, "Rakshak", Icons.Outlined.AutoAwesome, Icons.Filled.AutoAwesome),
+    BottomNavItem(Screen.REPORTS, "Vault", Icons.Outlined.Shield, Icons.Filled.Shield)
+)
 
 class MainActivity : ComponentActivity() {
 
@@ -92,9 +130,21 @@ fun RakshaKavachApp(
 ) {
     val navStack = remember { mutableStateListOf(Screen.HOME) }
     val currentScreen = navStack.lastOrNull() ?: Screen.HOME
+    val topLevelScreens = remember { bottomNavItems.map { it.screen }.toSet() }
 
     fun navigateTo(screen: Screen) {
-        navStack.add(screen)
+        if (currentScreen != screen) {
+            navStack.add(screen)
+        }
+    }
+
+    fun switchTab(screen: Screen) {
+        if (currentScreen == screen) return
+        navStack.clear()
+        navStack.add(Screen.HOME)
+        if (screen != Screen.HOME) {
+            navStack.add(screen)
+        }
     }
 
     fun navigateBack() {
@@ -119,7 +169,45 @@ fun RakshaKavachApp(
         }
     }
 
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            if (currentScreen in topLevelScreens) {
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 4.dp
+                ) {
+                    bottomNavItems.forEach { item ->
+                        val selected = currentScreen == item.screen
+                        NavigationBarItem(
+                            selected = selected,
+                            onClick = { switchTab(item.screen) },
+                            icon = {
+                                Icon(
+                                    imageVector = if (selected) item.selectedIcon else item.icon,
+                                    contentDescription = item.label
+                                )
+                            },
+                            label = {
+                                Text(
+                                    text = item.label,
+                                    fontSize = 11.sp,
+                                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium
+                                )
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = GuideViolet,
+                                selectedTextColor = GuideViolet,
+                                indicatorColor = GuideViolet.copy(alpha = 0.14f),
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             when (currentScreen) {
                 Screen.HOME -> HomeScreen(
@@ -137,11 +225,11 @@ fun RakshaKavachApp(
                             9 -> navigateTo(Screen.CHILD_SAFETY)
                         }
                     },
-                    onNavigateToContacts = { navigateTo(Screen.CONTACTS) },
-                    onNavigateToLiveLocation = { navigateTo(Screen.LIVE_LOCATION) },
+                    onNavigateToContacts = { switchTab(Screen.CONTACTS) },
+                    onNavigateToLiveLocation = { switchTab(Screen.LIVE_LOCATION) },
                     onNavigateToEvidenceRecording = { navigateTo(Screen.EVIDENCE_RECORDING) },
-                    onNavigateToAiAssistant = { navigateTo(Screen.AI_ASSISTANT) },
-                    onNavigateToReports = { navigateTo(Screen.REPORTS) }
+                    onNavigateToAiAssistant = { switchTab(Screen.AI_ASSISTANT) },
+                    onNavigateToReports = { switchTab(Screen.REPORTS) }
                 )
 
                 Screen.URGENT_HELP -> UrgentHelpScreen(

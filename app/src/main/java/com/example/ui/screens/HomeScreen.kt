@@ -1,6 +1,11 @@
 package com.example.ui.screens
 
 import android.Manifest
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Context
+import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -20,12 +25,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.outlined.DirectionsRun
+import androidx.compose.material.icons.outlined.AddToHomeScreen
 import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.ChildCare
 import androidx.compose.material.icons.outlined.Emergency
@@ -84,27 +89,30 @@ import com.example.ui.theme.SageTint
 import com.example.ui.theme.SaffronDeep
 import com.example.ui.theme.SaffronTint
 import com.example.ui.theme.SosRed
+import com.example.widget.SosWidgetProvider
 
 private data class HelpCategory(
     val num: Int,
     val title: String,
     val subtitle: String,
-    val icon: ImageVector
+    val icon: ImageVector,
+    val badge: String?,
+    val accent: Color
 )
 
-private val urgentCategories = listOf(
-    HelpCategory(1, "I need help urgently", "Calls 112 and alerts your contacts with your location", Icons.Outlined.Emergency),
-    HelpCategory(2, "I'm being followed", "Shares your location quietly and finds the nearest police", Icons.AutoMirrored.Outlined.DirectionsRun),
-    HelpCategory(3, "I need an ambulance", "Calls 112 and 108, shows hospitals near you", Icons.Outlined.LocalHospital)
+private val quickEmergencyCategories = listOf(
+    HelpCategory(1, "I Need Help Urgently", "Immediate SOS alert & 112", Icons.Outlined.Emergency, "112", Color(0xFFD93848)),
+    HelpCategory(2, "Someone Is Following Me", "Discreet alerts & nearest police", Icons.AutoMirrored.Outlined.DirectionsRun, "112", Color(0xFFE05D38)),
+    HelpCategory(3, "Medical Emergency", "Call ambulance (108 / 112)", Icons.Outlined.LocalHospital, "108", Color(0xFF0E8A72)),
+    HelpCategory(4, "Need Assistance", "Verified helplines & support", Icons.Outlined.PhoneInTalk, "181", Color(0xFF6A48D7))
 )
 
 private val supportCategories = listOf(
-    HelpCategory(4, "Helplines and assistance", "Verified numbers: 112, 181, 1091, 1930, 1098", Icons.Outlined.PhoneInTalk),
-    HelpCategory(5, "I'm being harassed", "Document what happened and know your options", Icons.Outlined.Campaign),
-    HelpCategory(6, "Assault", "Medical help first, then your legal rights", Icons.Outlined.Gavel),
-    HelpCategory(7, "Workplace harassment", "POSH Act rights and filing with the Internal Committee", Icons.Outlined.Work),
-    HelpCategory(8, "Cybercrime", "Report fraud on 1930 and keep your evidence", Icons.Outlined.Security),
-    HelpCategory(9, "Child safety", "Childline 1098 and POCSO guidance", Icons.Outlined.ChildCare)
+    HelpCategory(5, "Harassment Support", "Document & know your options", Icons.Outlined.Campaign, "1091", Color(0xFFD97706)),
+    HelpCategory(6, "Assault Support", "Medical help & legal rights", Icons.Outlined.Gavel, "181", Color(0xFFBE185D)),
+    HelpCategory(7, "Workplace POSH", "POSH Act & IC filing guide", Icons.Outlined.Work, "POSH", Color(0xFF2563EB)),
+    HelpCategory(8, "Cybercrime", "Report fraud & keep evidence", Icons.Outlined.Security, "1930", Color(0xFF0284C7)),
+    HelpCategory(9, "Child Safety", "Childline & POCSO guidance", Icons.Outlined.ChildCare, "1098", Color(0xFF16A34A))
 )
 
 @Composable
@@ -146,7 +154,7 @@ fun HomeScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .testTag("home_screen"),
-        contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 32.dp),
+        contentPadding = PaddingValues(start = 18.dp, end = 18.dp, top = 18.dp, bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
@@ -239,7 +247,7 @@ fun HomeScreen(
         }
 
         item {
-            Box(modifier = Modifier.padding(vertical = 8.dp)) {
+            Box(modifier = Modifier.padding(vertical = 6.dp)) {
                 SosEmergencyButton(
                     sosState = sosState,
                     onSosClick = {
@@ -267,7 +275,7 @@ fun HomeScreen(
                 QuickActionTile(
                     title = "Contacts",
                     icon = Icons.Outlined.People,
-                    color = KavachTeal,
+                    color = Color(0xFF0E8A72),
                     onClick = onNavigateToContacts,
                     modifier = Modifier.weight(1f),
                     testTag = "quick_access_contacts"
@@ -275,7 +283,7 @@ fun HomeScreen(
                 QuickActionTile(
                     title = "Location",
                     icon = Icons.Outlined.MyLocation,
-                    color = KavachTeal,
+                    color = Color(0xFF0284C7),
                     onClick = onNavigateToLiveLocation,
                     modifier = Modifier.weight(1f),
                     testTag = "quick_access_live_gps"
@@ -283,7 +291,7 @@ fun HomeScreen(
                 QuickActionTile(
                     title = "Record",
                     icon = Icons.Outlined.Mic,
-                    color = KavachTeal,
+                    color = Color(0xFFD93848),
                     onClick = onNavigateToEvidenceRecording,
                     modifier = Modifier.weight(1f),
                     testTag = "quick_access_record"
@@ -306,51 +314,60 @@ fun HomeScreen(
         }
 
         item {
-            Text(
-                text = "Get help now",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
-
-        items(urgentCategories, key = { it.num }) { item ->
-            UrgentCard(item = item, onClick = { onNavigateToCategory(item.num) })
-        }
-
-        item {
-            Text(
-                text = "More support",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(top = 8.dp)
+            StatusRow(
+                icon = Icons.Outlined.AddToHomeScreen,
+                text = "Add 3-tap SOS shortcut to home screen",
+                container = MaterialTheme.colorScheme.surface,
+                content = KavachTeal,
+                actionLabel = "Pin",
+                onClick = { pinSosWidget(context) }
             )
         }
 
         item {
-            val shape = RoundedCornerShape(14.dp)
-            Column(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(shape)
-                    .background(MaterialTheme.colorScheme.surface)
-                    .border(0.5.dp, MaterialTheme.colorScheme.outline, shape)
+                    .padding(top = 6.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                supportCategories.forEachIndexed { index, category ->
-                    SupportRow(category = category, onClick = { onNavigateToCategory(category.num) })
-                    if (index < supportCategories.lastIndex) {
-                        Box(
-                            modifier = Modifier
-                                .padding(start = 68.dp)
-                                .fillMaxWidth()
-                                .height(0.5.dp)
-                                .background(MaterialTheme.colorScheme.outline)
-                        )
-                    }
-                }
+                Text(
+                    text = "Quick Emergency Categories",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    text = "Instant 1-tap support",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
+        }
+
+        item {
+            CategoryGrid(
+                categories = quickEmergencyCategories,
+                onSelect = onNavigateToCategory
+            )
+        }
+
+        item {
+            Text(
+                text = "More Support & Rights",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(top = 6.dp)
+            )
+        }
+
+        item {
+            CategoryGrid(
+                categories = supportCategories,
+                onSelect = onNavigateToCategory
+            )
         }
 
         item {
@@ -358,7 +375,7 @@ fun HomeScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp)
+                    .padding(top = 6.dp)
                     .clip(shape)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable(role = Role.Button, onClick = onNavigateToReports)
@@ -437,6 +454,106 @@ fun HomeScreen(
         )
     }
 }
+@Composable
+private fun CategoryGrid(
+    categories: List<HelpCategory>,
+    onSelect: (Int) -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        categories.chunked(2).forEach { rowItems ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                rowItems.forEach { item ->
+                    CategoryGridCard(
+                        item = item,
+                        onClick = { onSelect(item.num) },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                if (rowItems.size == 1) {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
+        }
+    }
+}
+@Composable
+private fun CategoryGridCard(
+    item: HelpCategory,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val shape = RoundedCornerShape(16.dp)
+    Column(
+        modifier = modifier
+            .height(152.dp)
+            .clip(shape)
+            .background(item.accent.copy(alpha = 0.05f))
+            .border(1.dp, item.accent.copy(alpha = 0.28f), shape)
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(14.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(item.accent.copy(alpha = 0.14f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = item.icon,
+                    contentDescription = null,
+                    tint = item.accent,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+
+            if (item.badge != null) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(50))
+                        .background(item.accent.copy(alpha = 0.14f))
+                        .padding(horizontal = 9.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = item.badge,
+                        color = item.accent,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                text = item.title,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                lineHeight = 18.sp
+            )
+            Text(
+                text = item.subtitle,
+                fontSize = 11.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                lineHeight = 15.sp
+            )
+        }
+    }
+}
 
 private data class LocationRow(
     val icon: ImageVector,
@@ -498,7 +615,7 @@ private fun IconBadge(icon: ImageVector, tint: Color, size: Dp) {
         modifier = Modifier
             .size(size)
             .clip(CircleShape)
-            .background(tint.copy(alpha = 0.12f)),
+            .background(tint.copy(alpha = 0.14f)),
         contentAlignment = Alignment.Center
     ) {
         Icon(
@@ -515,12 +632,12 @@ private fun BetaPadhaoBannerCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val shape = RoundedCornerShape(16.dp)
+    val shape = RoundedCornerShape(18.dp)
     val gradient = Brush.linearGradient(
         colors = listOf(
-            Color(0xFF155259),
-            KavachTeal,
-            Color(0xFF28828C)
+            Color(0xFF1A1446),
+            Color(0xFF4C2396),
+            Color(0xFF1F6F78)
         )
     )
 
@@ -537,7 +654,7 @@ private fun BetaPadhaoBannerCard(
         Row(
             modifier = Modifier
                 .clip(RoundedCornerShape(50))
-                .background(Color.White.copy(alpha = 0.16f))
+                .background(Color.White.copy(alpha = 0.18f))
                 .padding(horizontal = 12.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -566,82 +683,9 @@ private fun BetaPadhaoBannerCard(
 
         Text(
             text = "Government Schemes, Sensitization & Pledge →",
-            color = Color.White.copy(alpha = 0.88f),
+            color = Color.White.copy(alpha = 0.9f),
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium
-        )
-    }
-}
-
-@Composable
-private fun UrgentCard(item: HelpCategory, onClick: () -> Unit) {
-    val shape = RoundedCornerShape(14.dp)
-    val accent = if (item.num == 1) SosRed else KavachTeal
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(MaterialTheme.colorScheme.surface)
-            .border(0.5.dp, MaterialTheme.colorScheme.outline, shape)
-            .clickable(role = Role.Button, onClick = onClick)
-            .padding(14.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconBadge(icon = item.icon, tint = accent, size = 44.dp)
-        Spacer(modifier = Modifier.width(14.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = item.title,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Text(
-                text = item.subtitle,
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
-
-@Composable
-private fun SupportRow(category: HelpCategory, onClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(role = Role.Button, onClick = onClick)
-            .padding(horizontal = 14.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconBadge(icon = category.icon, tint = KavachTeal, size = 40.dp)
-        Spacer(modifier = Modifier.width(14.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = category.title,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Text(
-                text = category.subtitle,
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -659,8 +703,8 @@ fun QuickActionTile(
     Column(
         modifier = modifier
             .clip(shape)
-            .background(MaterialTheme.colorScheme.surface)
-            .border(0.5.dp, MaterialTheme.colorScheme.outline, shape)
+            .background(color.copy(alpha = 0.06f))
+            .border(0.8.dp, color.copy(alpha = 0.22f), shape)
             .clickable(role = Role.Button, onClick = onClick)
             .padding(vertical = 14.dp, horizontal = 4.dp)
             .testTag(testTag),
@@ -670,11 +714,27 @@ fun QuickActionTile(
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = title,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.SemiBold,
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             maxLines = 1
         )
     }
+}
+
+private fun pinSosWidget(context: Context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val appWidgetManager = AppWidgetManager.getInstance(context)
+        val provider = ComponentName(context, SosWidgetProvider::class.java)
+        if (appWidgetManager.isRequestPinAppWidgetSupported) {
+            appWidgetManager.requestPinAppWidget(provider, null, null)
+            return
+        }
+    }
+    Toast.makeText(
+        context,
+        "Long-press your home screen → Widgets → Rakshakavach to add SOS",
+        Toast.LENGTH_LONG
+    ).show()
 }
