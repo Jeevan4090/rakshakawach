@@ -50,6 +50,7 @@ import com.example.ui.theme.CrimsonDark
 import com.example.ui.theme.CrimsonLight
 import com.example.ui.theme.CrimsonPrimary
 import com.example.ui.theme.GoldPrimary
+import com.example.ui.tr
 
 @Composable
 fun SosEmergencyButton(
@@ -88,14 +89,20 @@ fun SosEmergencyButton(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "🚨 SENDING SOS IN ${sosState.countdownRemaining}s",
+                        text = tr(
+                            "🚨 SENDING SOS IN ${sosState.countdownRemaining}s",
+                            "🚨 ${sosState.countdownRemaining} सेकंड में SOS भेजा जा रहा है"
+                        ),
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Contacts will receive your GPS coordinates & map link.",
+                        text = tr(
+                            "Contacts will receive your GPS coordinates & map link.",
+                            "संपर्कों को आपकी GPS लोकेशन और मैप लिंक मिल जाएगा।"
+                        ),
                         color = Color(0xFFFFDAD6),
                         fontSize = 13.sp,
                         textAlign = TextAlign.Center
@@ -110,7 +117,11 @@ fun SosEmergencyButton(
                             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                             modifier = Modifier.testTag("sos_send_now_button")
                         ) {
-                            Text("Send Now", color = CrimsonPrimary, fontWeight = FontWeight.Bold)
+                            Text(
+                                text = tr("Send Now", "अभी भेजें"),
+                                color = CrimsonPrimary,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                         OutlinedButton(
                             onClick = onCancelCountdown,
@@ -119,7 +130,7 @@ fun SosEmergencyButton(
                         ) {
                             Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Cancel", color = Color.White)
+                            Text(tr("Cancel", "रद्द करें"), color = Color.White)
                         }
                     }
                 }
@@ -171,7 +182,7 @@ fun SosEmergencyButton(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Warning,
-                        contentDescription = "Emergency Alert",
+                        contentDescription = tr("Emergency Alert", "आपातकालीन अलर्ट"),
                         tint = Color.White,
                         modifier = Modifier.size(36.dp)
                     )
@@ -184,7 +195,7 @@ fun SosEmergencyButton(
                         letterSpacing = 2.sp
                     )
                     Text(
-                        text = "PRESS FOR HELP",
+                        text = tr("PRESS FOR HELP", "मदद के लिए दबाएँ"),
                         color = Color.White.copy(alpha = 0.9f),
                         fontWeight = FontWeight.Bold,
                         fontSize = 10.sp,
@@ -215,7 +226,7 @@ fun SosEmergencyButton(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "CALL 112 DIRECT EMERGENCY",
+                text = tr("CALL 112 DIRECT EMERGENCY", "112 पर सीधी आपातकालीन कॉल"),
                 fontWeight = FontWeight.ExtraBold,
                 fontSize = 14.sp
             )

@@ -56,9 +56,11 @@ import com.example.data.ChatMessage
 import com.example.data.EmergencyAlertHelper
 import com.example.data.GoogleAuthHelper
 import com.example.data.MessageSender
+import com.example.ui.AppLanguage
 import com.example.ui.RakshaViewModel
 import com.example.ui.components.RakshaTopAppBar
 import com.example.ui.theme.CrimsonPrimary
+import com.example.ui.tr
 import kotlinx.coroutines.launch
 
 @Composable
@@ -84,13 +86,23 @@ fun AiAssistantScreen(
         }
     }
 
-    val quickPrompts = listOf(
-        "Someone is following me.",
-        "I am receiving threatening messages.",
-        "How do I report workplace harassment?",
-        "How do I report cyberstalking?",
-        "I need help finding a nearby police station."
-    )
+    val quickPrompts = if (AppLanguage.isHindi) {
+        listOf(
+            "कोई मेरा पीछा कर रहा है।",
+            "मुझे धमकी भरे संदेश मिल रहे हैं।",
+            "कार्यस्थल पर उत्पीड़न की शिकायत कैसे करें?",
+            "साइबर स्टॉकिंग की रिपोर्ट कैसे करें?",
+            "मुझे नज़दीकी पुलिस स्टेशन खोजने में मदद चाहिए।"
+        )
+    } else {
+        listOf(
+            "Someone is following me.",
+            "I am receiving threatening messages.",
+            "How do I report workplace harassment?",
+            "How do I report cyberstalking?",
+            "I need help finding a nearby police station."
+        )
+    }
 
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
@@ -101,7 +113,7 @@ fun AiAssistantScreen(
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = "Chat with Rakshak Assistant",
+                title = tr("Chat with Rakshak Assistant", "रक्षक असिस्टेंट से चैट करें"),
                 onBackClick = onNavigateBack
             )
         }
@@ -133,7 +145,10 @@ fun AiAssistantScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Notice: Raksha Assistant is an AI informational tool. It is NOT a replacement for emergency responders, police, legal advocates, or medical doctors. If in immediate danger, dial 112 below.",
+                        text = tr(
+                            "Notice: Raksha Assistant is an AI informational tool. It is NOT a replacement for emergency responders, police, legal advocates, or medical doctors. If in immediate danger, dial 112 below.",
+                            "सूचना: रक्षा असिस्टेंट एक AI सूचनात्मक टूल है। यह पुलिस, आपातकालीन सेवाओं, वकील या डॉक्टर का विकल्प नहीं है। तुरंत खतरे में हों तो 112 डायल करें।"
+                        ),
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 15.sp
@@ -151,7 +166,7 @@ fun AiAssistantScreen(
             ) {
                 if (signedInEmail == null) {
                     Text(
-                        text = "Offline mode (sign in for Live AI)",
+                        text = tr("Offline mode (sign in for Live AI)", "ऑफ़लाइन मोड (लाइव AI के लिए साइन इन करें)"),
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -164,9 +179,17 @@ fun AiAssistantScreen(
                                     isSigningIn = false
                                     if (auth != null) {
                                         viewModel.setGoogleAuth(auth.idToken, auth.email)
-                                        Toast.makeText(context, "Signed in as ${auth.email}", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            context,
+                                            tr("Signed in as ${auth.email}", "${auth.email} से साइन इन हुआ"),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     } else {
-                                        Toast.makeText(context, "Google Sign-In cancelled or failed", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            context,
+                                            tr("Google Sign-In cancelled or failed", "Google साइन-इन रद्द या विफल हुआ"),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 }
                             }
@@ -175,13 +198,17 @@ fun AiAssistantScreen(
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
                     ) {
                         Text(
-                            text = if (isSigningIn) "Signing in..." else "Sign in with Google",
+                            text = if (isSigningIn) {
+                                tr("Signing in...", "साइन इन हो रहा है...")
+                            } else {
+                                tr("Sign in with Google", "Google से साइन इन करें")
+                            },
                             fontSize = 11.sp
                         )
                     }
                 } else {
                     Text(
-                        text = "Live AI active ($signedInEmail)",
+                        text = tr("Live AI active ($signedInEmail)", "लाइव AI सक्रिय ($signedInEmail)"),
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Medium
@@ -193,7 +220,7 @@ fun AiAssistantScreen(
                         },
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
                     ) {
-                        Text("Sign out", fontSize = 11.sp)
+                        Text(tr("Sign out", "साइन आउट"), fontSize = 11.sp)
                     }
                 }
             }
@@ -244,7 +271,10 @@ fun AiAssistantScreen(
                             CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Raksha Assistant is evaluating safety guidance...",
+                                text = tr(
+                                    "Raksha Assistant is evaluating safety guidance...",
+                                    "रक्षा असिस्टेंट सुरक्षा मार्गदर्शन तैयार कर रहा है..."
+                                ),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -268,7 +298,9 @@ fun AiAssistantScreen(
                     OutlinedTextField(
                         value = inputText,
                         onValueChange = { inputText = it },
-                        placeholder = { Text("Ask Raksha Assistant for safety advice...") },
+                        placeholder = {
+                            Text(tr("Ask Raksha Assistant for safety advice...", "सुरक्षा सलाह के लिए पूछें..."))
+                        },
                         modifier = Modifier
                             .weight(1f)
                             .testTag("chat_input_field"),
@@ -290,7 +322,7 @@ fun AiAssistantScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "Send",
+                            contentDescription = tr("Send", "भेजें"),
                             tint = if (inputText.isNotBlank()) CrimsonPrimary else Color.Gray
                         )
                     }
@@ -306,6 +338,8 @@ fun ChatBubble(
     onCallHelpline: (String) -> Unit
 ) {
     val isUser = message.sender == MessageSender.USER
+    val bubbleBg = if (isUser) Color(0xFFF0D4F7) else Color(0xFFFFFFFF)
+    val bubbleText = Color(0xFF241729)
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -318,9 +352,8 @@ fun ChatBubble(
                 bottomStart = if (isUser) 14.dp else 2.dp,
                 bottomEnd = if (isUser) 2.dp else 14.dp
             ),
-            colors = CardDefaults.cardColors(
-                containerColor = if (isUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
-            ),
+            colors = CardDefaults.cardColors(containerColor = bubbleBg),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
             modifier = Modifier.fillMaxWidth(0.9f)
         ) {
             Column(modifier = Modifier.padding(14.dp)) {
@@ -339,7 +372,7 @@ fun ChatBubble(
                             Icon(Icons.Default.Warning, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "POTENTIAL DANGER DETECTED",
+                                text = tr("POTENTIAL DANGER DETECTED", "संभावित खतरा पाया गया"),
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 11.sp
@@ -351,7 +384,7 @@ fun ChatBubble(
                 Text(
                     text = message.text,
                     fontSize = 13.sp,
-                    color = if (isUser) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = bubbleText,
                     lineHeight = 18.sp
                 )
 
@@ -366,7 +399,7 @@ fun ChatBubble(
                         Icon(Icons.Default.Call, contentDescription = null, modifier = Modifier.size(14.dp))
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "CALL ${message.recommendedHelpline} NOW",
+                            text = tr("CALL ${message.recommendedHelpline} NOW", "अभी ${message.recommendedHelpline} पर कॉल करें"),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold
                         )

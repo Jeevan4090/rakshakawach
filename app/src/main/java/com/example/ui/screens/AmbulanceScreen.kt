@@ -18,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocalHospital
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
@@ -35,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,9 +47,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.EmergencyAlertHelper
+import com.example.ui.AppLanguage
 import com.example.ui.RakshaViewModel
 import com.example.ui.components.RakshaTopAppBar
 import com.example.ui.theme.CrimsonPrimary
+import com.example.ui.tr
 
 @Composable
 fun AmbulanceScreen(
@@ -58,25 +60,24 @@ fun AmbulanceScreen(
 ) {
     val context = LocalContext.current
     val currentLocation by viewModel.currentLocation.collectAsState()
-    val contacts by viewModel.contacts.collectAsState()
-
-    var selectedEmergencyType by remember { mutableStateOf("Severe Injury / Accident") }
-    var additionalNotes by remember { mutableStateOf("") }
-    var alertSentFeedback by remember { mutableStateOf<String?>(null) }
 
     val emergencyTypes = listOf(
-        "Severe Injury / Accident",
-        "Loss of Consciousness",
-        "Difficulty Breathing",
-        "Severe Pain / Bleeding",
-        "Maternal / Labor Onset",
-        "Assault / Trauma"
+        "Severe Injury / Accident" to "गंभीर चोट / दुर्घटना",
+        "Loss of Consciousness" to "बेहोशी",
+        "Difficulty Breathing" to "सांस लेने में तकलीफ",
+        "Severe Pain / Bleeding" to "तेज़ दर्द / रक्तस्राव",
+        "Maternal / Labor Onset" to "प्रसव / मातृत्व आपातकाल",
+        "Assault / Trauma" to "हमला / ट्रॉमा"
     )
+
+    var selectedIndex by remember { mutableIntStateOf(0) }
+    var additionalNotes by remember { mutableStateOf("") }
+    var alertSentFeedback by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = "Medical & Ambulance",
+                title = tr("Medical & Ambulance", "मेडिकल और एम्बुलेंस"),
                 onBackClick = onNavigateBack
             )
         }
@@ -107,7 +108,11 @@ fun AmbulanceScreen(
                     ) {
                         Icon(Icons.Default.Call, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("DIAL 112\n(UNIFIED)", fontSize = 12.sp, fontWeight = FontWeight.Black)
+                        Text(
+                            text = tr("DIAL 112\n(UNIFIED)", "112 डायल करें\n(आपातकाल)"),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Black
+                        )
                     }
 
                     Button(
@@ -121,7 +126,11 @@ fun AmbulanceScreen(
                     ) {
                         Icon(Icons.Default.MedicalServices, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("DIAL 108\n(AMBULANCE)", fontSize = 12.sp, fontWeight = FontWeight.Black)
+                        Text(
+                            text = tr("DIAL 108\n(AMBULANCE)", "108 डायल करें\n(एम्बुलेंस)"),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Black
+                        )
                     }
                 }
             }
@@ -135,7 +144,13 @@ fun AmbulanceScreen(
                         .fillMaxWidth()
                         .testTag("ambulance_dial_102_button")
                 ) {
-                    Text("Dial 102 (Maternal & Infant Ambulance Transport)", fontWeight = FontWeight.SemiBold)
+                    Text(
+                        text = tr(
+                            "Dial 102 (Maternal & Infant Ambulance Transport)",
+                            "102 डायल करें (मातृ एवं शिशु एम्बुलेंस सेवा)"
+                        ),
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
             }
 
@@ -158,7 +173,10 @@ fun AmbulanceScreen(
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "Important: Tapping the call buttons dials the verified government ambulance helpline. An ambulance is only dispatched once you connect with the official dispatcher and confirm your condition and location.",
+                            text = tr(
+                                "Important: Tapping the call buttons dials the verified government ambulance helpline. An ambulance is only dispatched once you connect with the official dispatcher and confirm your condition and location.",
+                                "महत्वपूर्ण: कॉल बटन दबाने पर सत्यापित सरकारी एम्बुलेंस हेल्पलाइन डायल होती है। एम्बुलेंस तभी भेजी जाती है जब आप ऑपरेटर से जुड़कर अपनी स्थिति और लोकेशन की पुष्टि करते हैं।"
+                            ),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 15.sp
@@ -184,14 +202,20 @@ fun AmbulanceScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Locate Nearest Hospitals & Trauma Centers",
+                                text = tr(
+                                    "Locate Nearest Hospitals & Trauma Centers",
+                                    "नज़दीकी अस्पताल और ट्रॉमा सेंटर खोजें"
+                                ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 15.sp
                             )
                         }
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "Open Google Maps navigation to verified hospitals and emergency rooms nearest to your location.",
+                            text = tr(
+                                "Open Google Maps navigation to verified hospitals and emergency rooms nearest to your location.",
+                                "अपनी लोकेशन के पास सत्यापित अस्पतालों और इमरजेंसी कक्षों के लिए Google Maps खोलें।"
+                            ),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -207,7 +231,9 @@ fun AmbulanceScreen(
                         ) {
                             Icon(Icons.Default.LocalHospital, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Open Nearby Hospitals on Google Maps")
+                            Text(
+                                tr("Open Nearby Hospitals on Google Maps", "Google Maps पर नज़दीकी अस्पताल देखें")
+                            )
                         }
                     }
                 }
@@ -222,13 +248,16 @@ fun AmbulanceScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = "Medical Emergency Details Form",
+                            text = tr("Medical Emergency Details Form", "मेडिकल इमरजेंसी विवरण फॉर्म"),
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Specify symptoms to quickly broadcast to your emergency contacts alongside your GPS pin:",
+                            text = tr(
+                                "Specify symptoms to quickly broadcast to your emergency contacts alongside your GPS pin:",
+                                "अपने आपातकालीन संपर्कों को GPS लोकेशन के साथ तुरंत भेजने के लिए लक्षण चुनें:"
+                            ),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -237,20 +266,21 @@ fun AmbulanceScreen(
 
                         // Chips
                         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            emergencyTypes.chunked(2).forEach { rowItems ->
+                            emergencyTypes.indices.chunked(2).forEach { rowIndices ->
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    rowItems.forEach { type ->
+                                    rowIndices.forEach { idx ->
+                                        val (en, hi) = emergencyTypes[idx]
                                         FilterChip(
-                                            selected = selectedEmergencyType == type,
-                                            onClick = { selectedEmergencyType = type },
-                                            label = { Text(type, fontSize = 11.sp) },
+                                            selected = selectedIndex == idx,
+                                            onClick = { selectedIndex = idx },
+                                            label = { Text(if (AppLanguage.isHindi) hi else en, fontSize = 11.sp) },
                                             modifier = Modifier.weight(1f)
                                         )
                                     }
-                                    if (rowItems.size == 1) {
+                                    if (rowIndices.size == 1) {
                                         Spacer(modifier = Modifier.weight(1f))
                                     }
                                 }
@@ -262,8 +292,22 @@ fun AmbulanceScreen(
                         OutlinedTextField(
                             value = additionalNotes,
                             onValueChange = { additionalNotes = it },
-                            label = { Text("Any Allergies, Blood Group, or Specific Landmark") },
-                            placeholder = { Text("e.g. Diabetic, Apartment 3B, Severe bleeding") },
+                            label = {
+                                Text(
+                                    tr(
+                                        "Any Allergies, Blood Group, or Specific Landmark",
+                                        "एलर्जी, ब्लड ग्रुप या नज़दीकी पहचान चिह्न"
+                                    )
+                                )
+                            },
+                            placeholder = {
+                                Text(
+                                    tr(
+                                        "e.g. Diabetic, Apartment 3B, Severe bleeding",
+                                        "जैसे: शुगर, अपार्टमेंट 3B, अधिक रक्तस्राव"
+                                    )
+                                )
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .testTag("medical_notes_input"),
@@ -284,9 +328,13 @@ fun AmbulanceScreen(
 
                         Button(
                             onClick = {
-                                val text = "MEDICAL EMERGENCY ALERT: I require an ambulance. Condition: $selectedEmergencyType. Notes: ${additionalNotes.ifBlank { "None" }}."
+                                val selectedEn = emergencyTypes[selectedIndex].first
+                                val text = "MEDICAL EMERGENCY ALERT: I require an ambulance. Condition: $selectedEn. Notes: ${additionalNotes.ifBlank { "None" }}."
                                 viewModel.triggerSosAlertImmediate(text)
-                                alertSentFeedback = "Medical alert shared with contacts."
+                                alertSentFeedback = tr(
+                                    "Medical alert shared with contacts.",
+                                    "मेडिकल अलर्ट संपर्कों के साथ साझा किया गया।"
+                                )
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0F172A)),
                             modifier = Modifier
@@ -296,7 +344,12 @@ fun AmbulanceScreen(
                         ) {
                             Icon(Icons.Default.Send, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Share Medical Details & GPS with Contacts")
+                            Text(
+                                tr(
+                                    "Share Medical Details & GPS with Contacts",
+                                    "मेडिकल विवरण और GPS संपर्कों को भेजें"
+                                )
+                            )
                         }
                     }
                 }

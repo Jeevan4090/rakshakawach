@@ -20,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -38,7 +37,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -46,10 +44,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.EmergencyAlertHelper
 import com.example.data.entity.HelplineItem
+import com.example.ui.AppLanguage
 import com.example.ui.RakshaViewModel
 import com.example.ui.components.RakshaTopAppBar
 import com.example.ui.theme.CrimsonPrimary
 import com.example.ui.theme.SafeGreen
+import com.example.ui.tr
 
 @Composable
 fun HelplineDirectoryScreen(
@@ -62,19 +62,19 @@ fun HelplineDirectoryScreen(
     val selectedCategory by viewModel.selectedHelplineCategory.collectAsState()
 
     val categories = listOf(
-        "All",
-        "Emergency",
-        "Women Safety",
-        "Medical",
-        "Cybercrime",
-        "Child Protection",
-        "Regional (WB/Kolkata)"
+        "All" to "सभी",
+        "Emergency" to "आपातकाल",
+        "Women Safety" to "महिला सुरक्षा",
+        "Medical" to "चिकित्सा",
+        "Cybercrime" to "साइबर क्राइम",
+        "Child Protection" to "बाल सुरक्षा",
+        "Regional (WB/Kolkata)" to "क्षेत्रीय (WB/कोलकाता)"
     )
 
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = "Verified Helpline Directory",
+                title = tr("Verified Helpline Directory", "सत्यापित हेल्पलाइन निर्देशिका"),
                 onBackClick = onNavigateBack
             )
         }
@@ -93,7 +93,14 @@ fun HelplineDirectoryScreen(
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { viewModel.setHelplineSearch(it) },
-                    label = { Text("Search helpline name, number, or keyword...") },
+                    label = {
+                        Text(
+                            tr(
+                                "Search helpline name, number, or keyword...",
+                                "हेल्पलाइन नाम, नंबर या कीवर्ड खोजें..."
+                            )
+                        )
+                    },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -109,12 +116,12 @@ fun HelplineDirectoryScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(vertical = 4.dp)
                 ) {
-                    items(categories) { category ->
+                    items(categories) { (en, hi) ->
                         FilterChip(
-                            selected = selectedCategory == category,
-                            onClick = { viewModel.setHelplineCategory(category) },
-                            label = { Text(category, fontSize = 12.sp) },
-                            modifier = Modifier.testTag("filter_chip_$category")
+                            selected = selectedCategory == en,
+                            onClick = { viewModel.setHelplineCategory(en) },
+                            label = { Text(if (AppLanguage.isHindi) hi else en, fontSize = 12.sp) },
+                            modifier = Modifier.testTag("filter_chip_$en")
                         )
                     }
                 }
@@ -139,7 +146,10 @@ fun HelplineDirectoryScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "All helplines are verified against official government directories. In case a regional line is congested, 112 functions as the single national fallback.",
+                            text = tr(
+                                "All helplines are verified against official government directories. In case a regional line is congested, 112 functions as the single national fallback.",
+                                "सभी हेल्पलाइन आधिकारिक सरकारी निर्देशिकाओं से सत्यापित हैं। यदि कोई क्षेत्रीय लाइन व्यस्त हो, तो 112 राष्ट्रीय आपातकालीन नंबर के रूप में काम करता है।"
+                            ),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -236,7 +246,10 @@ fun HelplineCard(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Availability: ${helpline.availability}",
+                    text = tr(
+                        "Availability: ${helpline.availability}",
+                        "उपलब्धता: ${helpline.availability}"
+                    ),
                     fontSize = 11.sp,
                     color = SafeGreen,
                     fontWeight = FontWeight.Medium
@@ -268,7 +281,14 @@ fun HelplineCard(
                 ) {
                     Icon(Icons.Default.Call, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("TAP TO CALL ${helpline.number}", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = tr(
+                            "TAP TO CALL ${helpline.number}",
+                            "${helpline.number} पर कॉल करें"
+                        ),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
 
                 if (onCallAlt != null && helpline.alternativeNumber != null) {
@@ -276,7 +296,13 @@ fun HelplineCard(
                         onClick = onCallAlt,
                         modifier = Modifier.testTag("alt_dial_button_${helpline.number}")
                     ) {
-                        Text("Alt (${helpline.alternativeNumber})", fontSize = 11.sp)
+                        Text(
+                            text = tr(
+                                "Alt (${helpline.alternativeNumber})",
+                                "अन्य (${helpline.alternativeNumber})"
+                            ),
+                            fontSize = 11.sp
+                        )
                     }
                 }
             }

@@ -42,6 +42,7 @@ import com.example.data.EmergencyAlertHelper
 import com.example.ui.RakshaViewModel
 import com.example.ui.components.RakshaTopAppBar
 import com.example.ui.theme.SageDeep
+import com.example.ui.tr
 
 @Composable
 fun WorkplaceHarassmentScreen(
@@ -61,7 +62,7 @@ fun WorkplaceHarassmentScreen(
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = "Workplace harassment",
+                title = tr("Workplace harassment", "कार्यस्थल पर उत्पीड़न"),
                 onBackClick = onNavigateBack
             )
         }
@@ -77,10 +78,13 @@ fun WorkplaceHarassmentScreen(
         ) {
             item {
                 SurfaceCard {
-                    CardHeader(icon = Icons.Outlined.Work, title = "SHe-Box portal")
+                    CardHeader(icon = Icons.Outlined.Work, title = tr("SHe-Box portal", "SHe-Box पोर्टल"))
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "The Government of India's single-window portal for women employees, in government and private workplaces, to file complaints under the POSH Act 2013 directly with the concerned authority.",
+                        text = tr(
+                            "The Government of India's single-window portal for women employees, in government and private workplaces, to file complaints under the POSH Act 2013 directly with the concerned authority.",
+                            "सरकारी और निजी कार्यस्थलों में महिला कर्मचारियों के लिए भारत सरकार का सिंगल-विंडो पोर्टल, जहाँ POSH अधिनियम 2013 के तहत सीधे संबंधित प्राधिकरण को शिकायत दर्ज की जा सकती है।"
+                        ),
                         fontSize = 13.sp,
                         lineHeight = 19.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -101,29 +105,44 @@ fun WorkplaceHarassmentScreen(
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Open SHe-Box")
+                        Text(tr("Open SHe-Box", "SHe-Box खोलें"))
                     }
                 }
             }
 
             item {
                 SurfaceCard {
-                    CardHeader(icon = Icons.Outlined.Gavel, title = "Your protections under the POSH Act")
-                    FactRow(
-                        "Internal Committee",
-                        "Employers with 10 or more employees must set up an IC led by a senior woman employee, with at least half its members women."
+                    CardHeader(
+                        icon = Icons.Outlined.Gavel,
+                        title = tr("Your protections under the POSH Act", "POSH अधिनियम के तहत आपके अधिकार")
                     )
                     FactRow(
-                        "Local Committee",
-                        "If your workplace has fewer than 10 employees, or the complaint is against the employer, file with the District Local Committee."
+                        tr("Internal Committee", "आंतरिक समिति (IC)"),
+                        tr(
+                            "Employers with 10 or more employees must set up an IC led by a senior woman employee, with at least half its members women.",
+                            "10 या अधिक कर्मचारियों वाले नियोक्ताओं को एक वरिष्ठ महिला कर्मचारी की अध्यक्षता में आंतरिक समिति (IC) बनाना अनिवार्य है, जिसमें कम से कम आधे सदस्य महिलाएँ हों।"
+                        )
                     )
                     FactRow(
-                        "Three-month window",
-                        "File within 3 months of the incident. The committee can extend this by another 3 months."
+                        tr("Local Committee", "स्थानीय समिति (LC)"),
+                        tr(
+                            "If your workplace has fewer than 10 employees, or the complaint is against the employer, file with the District Local Committee.",
+                            "यदि आपके कार्यस्थल में 10 से कम कर्मचारी हैं, या शिकायत नियोक्ता के विरुद्ध है, तो जिला स्थानीय समिति (LC) में शिकायत दर्ज करें।"
+                        )
                     )
                     FactRow(
-                        "Confidentiality",
-                        "Section 16 bars anyone from disclosing your identity or the inquiry proceedings."
+                        tr("Three-month window", "तीन महीने की समय-सीमा"),
+                        tr(
+                            "File within 3 months of the incident. The committee can extend this by another 3 months.",
+                            "घटना के 3 महीने के भीतर शिकायत दर्ज करें। समिति इसे अगले 3 महीने तक बढ़ा सकती है।"
+                        )
+                    )
+                    FactRow(
+                        tr("Confidentiality", "गोपनीयता"),
+                        tr(
+                            "Section 16 bars anyone from disclosing your identity or the inquiry proceedings.",
+                            "धारा 16 किसी को भी आपकी पहचान या जांच की कार्यवाही उजागर करने से रोकती है।"
+                        )
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     OutlinedButton(
@@ -138,7 +157,7 @@ fun WorkplaceHarassmentScreen(
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Call 181 for legal guidance")
+                        Text(tr("Call 181 for legal guidance", "कानूनी मार्गदर्शन के लिए 181 पर कॉल करें"))
                     }
                 }
             }
@@ -147,22 +166,53 @@ fun WorkplaceHarassmentScreen(
                 SurfaceCard(container = MaterialTheme.colorScheme.surfaceVariant) {
                     CardHeader(
                         icon = Icons.Outlined.Folder,
-                        title = "Keep your evidence",
+                        title = tr("Keep your evidence", "अपने सबूत सुरक्षित रखें"),
                         tint = MaterialTheme.colorScheme.onBackground
                     )
-                    FactRow("1", "Forward abusive emails or work chats to your personal email.")
-                    FactRow("2", "Screenshot Slack, Teams, or WhatsApp messages with the date and time visible.")
-                    FactRow("3", "Keep a dated diary of verbal incidents, inappropriate requests, or comments.")
-                    FactRow("4", "Note the colleagues or witnesses who were present.")
+                    FactRow(
+                        "1",
+                        tr(
+                            "Forward abusive emails or work chats to your personal email.",
+                            "अपमानजनक ईमेल या वर्क चैट को अपने निजी ईमेल पर फॉरवर्ड करें।"
+                        )
+                    )
+                    FactRow(
+                        "2",
+                        tr(
+                            "Screenshot Slack, Teams, or WhatsApp messages with the date and time visible.",
+                            "Slack, Teams या WhatsApp संदेशों के तारीख और समय के साथ स्क्रीनशॉट लें।"
+                        )
+                    )
+                    FactRow(
+                        "3",
+                        tr(
+                            "Keep a dated diary of verbal incidents, inappropriate requests, or comments.",
+                            "मौखिक घटनाओं, अनुचित मांगों या टिप्पणियों की तारीख के साथ डायरी लिखें।"
+                        )
+                    )
+                    FactRow(
+                        "4",
+                        tr(
+                            "Note the colleagues or witnesses who were present.",
+                            "वहाँ मौजूद सहकर्मियों या गवाहों के नाम नोट करें।"
+                        )
+                    )
                 }
             }
 
             item {
                 SurfaceCard {
-                    CardHeader(icon = Icons.Outlined.Lock, title = "Private complaint draft", tint = SageDeep)
+                    CardHeader(
+                        icon = Icons.Outlined.Lock,
+                        title = tr("Private complaint draft", "निजी शिकायत ड्राफ्ट"),
+                        tint = SageDeep
+                    )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Write your account here first. It stays on this phone until you submit to the IC or SHe-Box.",
+                        text = tr(
+                            "Write your account here first. It stays on this phone until you submit to the IC or SHe-Box.",
+                            "अपना विवरण पहले यहाँ लिख लें। जब तक आप IC या SHe-Box में जमा न करें, यह केवल आपके फोन में सुरक्षित रहेगा।"
+                        ),
                         fontSize = 13.sp,
                         lineHeight = 19.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -175,7 +225,7 @@ fun WorkplaceHarassmentScreen(
                             companyDetails = it
                             isSaved = false
                         },
-                        label = "Organization, department, or branch"
+                        label = tr("Organization, department, or branch", "संस्थान, विभाग या शाखा")
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     FormField(
@@ -184,7 +234,7 @@ fun WorkplaceHarassmentScreen(
                             perpetratorInfo = it
                             isSaved = false
                         },
-                        label = "Respondent's name and designation"
+                        label = tr("Respondent's name and designation", "आरोपी का नाम और पद")
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     FormField(
@@ -194,10 +244,12 @@ fun WorkplaceHarassmentScreen(
                             incidentError = false
                             isSaved = false
                         },
-                        label = "What happened, in order",
+                        label = tr("What happened, in order", "क्या हुआ, क्रम से लिखें"),
                         singleLine = false,
                         minLines = 4,
-                        error = if (incidentError) "Describe what happened to save the draft" else null,
+                        error = if (incidentError) {
+                            tr("Describe what happened to save the draft", "ड्राफ्ट सहेजने के लिए घटना का विवरण लिखें")
+                        } else null,
                         modifier = Modifier.testTag("workplace_complaint_input")
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -207,8 +259,8 @@ fun WorkplaceHarassmentScreen(
                             evidenceItems = it
                             isSaved = false
                         },
-                        label = "Evidence you have",
-                        placeholder = "Emails, witnesses, chat logs"
+                        label = tr("Evidence you have", "आपके पास मौजूद सबूत"),
+                        placeholder = tr("Emails, witnesses, chat logs", "ईमेल, गवाह, चैट लॉग")
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -233,7 +285,7 @@ fun WorkplaceHarassmentScreen(
                             .height(48.dp)
                             .testTag("save_workplace_report_button")
                     ) {
-                        Text("Save draft to vault")
+                        Text(tr("Save draft to vault", "ड्राफ्ट वॉल्ट में सहेजें"))
                     }
 
                     if (isSaved) {
@@ -243,13 +295,13 @@ fun WorkplaceHarassmentScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Draft saved to your vault",
+                                text = tr("Draft saved to your vault", "ड्राफ्ट आपके वॉल्ट में सहेजा गया"),
                                 color = SageDeep,
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 13.sp
                             )
                             TextButton(onClick = onNavigateToReports) {
-                                Text("View in vault")
+                                Text(tr("View in vault", "वॉल्ट में देखें"))
                             }
                         }
                     }

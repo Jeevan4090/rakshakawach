@@ -48,6 +48,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -66,13 +67,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.EmergencyAlertHelper
 import com.example.data.entity.TrustedContact
+import com.example.ui.AppLanguage
 import com.example.ui.RakshaViewModel
 import com.example.ui.components.RakshaTopAppBar
 import com.example.ui.theme.KavachTeal
+import com.example.ui.theme.Saffron
 import com.example.ui.theme.SaffronDeep
 import com.example.ui.theme.SaffronTint
-import com.example.ui.theme.Saffron
 import com.example.ui.theme.TealTint
+import com.example.ui.tr
 
 @Composable
 fun ContactsScreen(
@@ -88,7 +91,7 @@ fun ContactsScreen(
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = "Trusted contacts",
+                title = tr("Trusted contacts", "विश्वसनीय संपर्क"),
                 onBackClick = onNavigateBack
             )
         },
@@ -99,7 +102,7 @@ fun ContactsScreen(
                 contentColor = Color.White,
                 modifier = Modifier.testTag("add_contact_fab")
             ) {
-                Icon(Icons.Outlined.Add, contentDescription = "Add contact")
+                Icon(Icons.Outlined.Add, contentDescription = tr("Add contact", "संपर्क जोड़ें"))
             }
         }
     ) { padding ->
@@ -115,7 +118,10 @@ fun ContactsScreen(
             item {
                 NoticeCard(
                     icon = Icons.Outlined.Info,
-                    text = "When you send an SOS, these contacts get an SMS with your message, your coordinates, and a live Google Maps link. Your primary contact is alerted first.",
+                    text = tr(
+                        "When you send an SOS, these contacts get an SMS with your message, your coordinates, and a live Google Maps link. Your primary contact is alerted first.",
+                        "जब आप SOS भेजती हैं, तो इन संपर्कों को आपके संदेश, लोकेशन और लाइव Google Maps लिंक के साथ SMS मिलता है। आपके प्राथमिक संपर्क को सबसे पहले सूचित किया जाता है।"
+                    ),
                     container = MaterialTheme.colorScheme.surfaceVariant,
                     content = MaterialTheme.colorScheme.onBackground
                 )
@@ -144,14 +150,17 @@ fun ContactsScreen(
                             }
                             Spacer(modifier = Modifier.height(14.dp))
                             Text(
-                                text = "No contacts yet",
+                                text = tr("No contacts yet", "अभी कोई संपर्क नहीं है"),
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 17.sp,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Add family or friends who can respond quickly if you send an SOS.",
+                                text = tr(
+                                    "Add family or friends who can respond quickly if you send an SOS.",
+                                    "परिवार या दोस्तों को जोड़ें जो SOS भेजने पर तुरंत मदद कर सकें।"
+                                ),
                                 fontSize = 13.sp,
                                 lineHeight = 19.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -165,7 +174,7 @@ fun ContactsScreen(
                                     .height(48.dp)
                                     .testTag("add_first_contact_button")
                             ) {
-                                Text("Add a contact")
+                                Text(tr("Add a contact", "संपर्क जोड़ें"))
                             }
                         }
                     }
@@ -191,7 +200,7 @@ fun ContactsScreen(
                             .height(48.dp)
                             .testTag("test_broadcast_button")
                     ) {
-                        Text("Send a test alert")
+                        Text(tr("Send a test alert", "टेस्ट अलर्ट भेजें"))
                     }
                 }
             }
@@ -211,8 +220,15 @@ fun ContactsScreen(
     pendingDelete?.let { contact ->
         AlertDialog(
             onDismissRequest = { pendingDelete = null },
-            title = { Text("Remove ${contact.name}?") },
-            text = { Text("They will stop receiving your SOS alerts.") },
+            title = { Text(tr("Remove ${contact.name}?", "${contact.name} को हटाएँ?")) },
+            text = {
+                Text(
+                    tr(
+                        "They will stop receiving your SOS alerts.",
+                        "उन्हें अब आपके SOS अलर्ट नहीं मिलेंगे।"
+                    )
+                )
+            },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -220,12 +236,12 @@ fun ContactsScreen(
                         pendingDelete = null
                     }
                 ) {
-                    Text("Remove", color = MaterialTheme.colorScheme.error)
+                    Text(tr("Remove", "हटाएँ"), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { pendingDelete = null }) {
-                    Text("Cancel")
+                    Text(tr("Cancel", "रद्द करें"))
                 }
             }
         )
@@ -234,9 +250,14 @@ fun ContactsScreen(
     if (showTestDialog) {
         AlertDialog(
             onDismissRequest = { showTestDialog = false },
-            title = { Text("Send a test alert?") },
+            title = { Text(tr("Send a test alert?", "टेस्ट अलर्ट भेजें?")) },
             text = {
-                Text("This sends a real SMS with your location to all ${contacts.size} of your contacts. The message says it's a test.")
+                Text(
+                    tr(
+                        "This sends a real SMS with your location to all ${contacts.size} of your contacts. The message says it's a test.",
+                        "इससे आपके सभी ${contacts.size} संपर्कों को आपकी लोकेशन के साथ एक असली SMS जाएगा। संदेश में लिखा होगा कि यह केवल एक टेस्ट है।"
+                    )
+                )
             },
             confirmButton = {
                 TextButton(
@@ -245,12 +266,12 @@ fun ContactsScreen(
                         showTestDialog = false
                     }
                 ) {
-                    Text("Send test")
+                    Text(tr("Send test", "टेस्ट भेजें"))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showTestDialog = false }) {
-                    Text("Cancel")
+                    Text(tr("Cancel", "रद्द करें"))
                 }
             }
         )
@@ -320,7 +341,7 @@ fun ContactCardItem(
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     ) {
                         Text(
-                            text = "Primary",
+                            text = tr("Primary", "प्राथमिक"),
                             color = SaffronDeep,
                             fontWeight = FontWeight.Medium,
                             fontSize = 11.sp
@@ -345,7 +366,11 @@ fun ContactCardItem(
         ) {
             Icon(
                 imageVector = if (contact.isPrimary) Icons.Filled.Star else Icons.Outlined.StarBorder,
-                contentDescription = if (contact.isPrimary) "Remove as primary contact" else "Make primary contact",
+                contentDescription = if (contact.isPrimary) {
+                    tr("Remove as primary contact", "प्राथमिक संपर्क से हटाएँ")
+                } else {
+                    tr("Make primary contact", "प्राथमिक संपर्क बनाएँ")
+                },
                 tint = if (contact.isPrimary) Saffron else MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -358,7 +383,7 @@ fun ContactCardItem(
         ) {
             Icon(
                 imageVector = Icons.Outlined.Call,
-                contentDescription = "Call ${contact.name}",
+                contentDescription = tr("Call ${contact.name}", "${contact.name} को कॉल करें"),
                 tint = KavachTeal
             )
         }
@@ -371,7 +396,7 @@ fun ContactCardItem(
         ) {
             Icon(
                 imageVector = Icons.Outlined.DeleteOutline,
-                contentDescription = "Remove ${contact.name}",
+                contentDescription = tr("Remove ${contact.name}", "${contact.name} को हटाएँ"),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -384,19 +409,37 @@ fun AddContactDialog(
     onDismiss: () -> Unit,
     onConfirm: (name: String, phone: String, relationship: String, isPrimary: Boolean) -> Unit
 ) {
+    val relationships = listOf(
+        "Mother" to "माता",
+        "Father" to "पिता",
+        "Sister" to "बहन",
+        "Brother" to "भाई",
+        "Guardian" to "अभिभावक",
+        "Friend" to "दोस्त",
+        "Partner" to "साथी",
+        "Colleague" to "सहकर्मी",
+        "Other" to "अन्य"
+    )
+
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
-    var relationship by remember { mutableStateOf("Friend") }
+    var selectedRelIndex by remember { mutableIntStateOf(5) } // Default: Friend
     var isPrimary by remember { mutableStateOf(false) }
     var nameError by remember { mutableStateOf(false) }
     var phoneError by remember { mutableStateOf(false) }
     var expandedRel by remember { mutableStateOf(false) }
 
-    val relationships = listOf("Mother", "Father", "Sister", "Brother", "Guardian", "Friend", "Partner", "Colleague", "Other")
+    val selectedRelDisplay = if (AppLanguage.isHindi) {
+        relationships[selectedRelIndex].second
+    } else {
+        relationships[selectedRelIndex].first
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add a trusted contact", fontWeight = FontWeight.Medium) },
+        title = {
+            Text(tr("Add a trusted contact", "विश्वसनीय संपर्क जोड़ें"), fontWeight = FontWeight.Medium)
+        },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 FormField(
@@ -405,8 +448,8 @@ fun AddContactDialog(
                         name = it
                         nameError = false
                     },
-                    label = "Name",
-                    error = if (nameError) "Enter a name" else null,
+                    label = tr("Name", "नाम"),
+                    error = if (nameError) tr("Enter a name", "नाम दर्ज करें") else null,
                     modifier = Modifier.testTag("add_contact_name_input")
                 )
 
@@ -416,12 +459,14 @@ fun AddContactDialog(
                         phone = it
                         phoneError = false
                     },
-                    label = { Text("Mobile number") },
+                    label = { Text(tr("Mobile number", "मोबाइल नंबर")) },
                     placeholder = { Text("+91 98765 43210") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     singleLine = true,
                     isError = phoneError,
-                    supportingText = { if (phoneError) Text("Enter a valid mobile number") },
+                    supportingText = {
+                        if (phoneError) Text(tr("Enter a valid mobile number", "मान्य मोबाइल नंबर दर्ज करें"))
+                    },
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -433,10 +478,10 @@ fun AddContactDialog(
                     onExpandedChange = { expandedRel = it }
                 ) {
                     OutlinedTextField(
-                        value = relationship,
+                        value = selectedRelDisplay,
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Relationship") },
+                        label = { Text(tr("Relationship", "रिश्ता")) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRel) },
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier
@@ -447,11 +492,11 @@ fun AddContactDialog(
                         expanded = expandedRel,
                         onDismissRequest = { expandedRel = false }
                     ) {
-                        relationships.forEach { rel ->
+                        relationships.forEachIndexed { index, (en, hi) ->
                             DropdownMenuItem(
-                                text = { Text(rel) },
+                                text = { Text(if (AppLanguage.isHindi) hi else en) },
                                 onClick = {
-                                    relationship = rel
+                                    selectedRelIndex = index
                                     expandedRel = false
                                 }
                             )
@@ -472,7 +517,10 @@ fun AddContactDialog(
                             .padding(12.dp)
                             .testTag("add_contact_primary_checkbox")
                     )
-                    Text("Make this my primary contact", fontSize = 14.sp)
+                    Text(
+                        text = tr("Make this my primary contact", "इसे मेरा प्राथमिक संपर्क बनाएँ"),
+                        fontSize = 14.sp
+                    )
                 }
             }
         },
@@ -482,17 +530,22 @@ fun AddContactDialog(
                     nameError = name.isBlank()
                     phoneError = phone.count { it.isDigit() } < 10
                     if (!nameError && !phoneError) {
-                        onConfirm(name.trim(), phone.trim(), relationship, isPrimary)
+                        onConfirm(
+                            name.trim(),
+                            phone.trim(),
+                            relationships[selectedRelIndex].first,
+                            isPrimary
+                        )
                     }
                 },
                 modifier = Modifier.testTag("save_contact_dialog_button")
             ) {
-                Text("Save contact")
+                Text(tr("Save contact", "संपर्क सहेजें"))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(tr("Cancel", "रद्द करें"))
             }
         }
     )

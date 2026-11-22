@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.EmergencyAlertHelper
@@ -51,6 +52,7 @@ import com.example.ui.RakshaViewModel
 import com.example.ui.components.RakshaTopAppBar
 import com.example.ui.theme.CrimsonPrimary
 import com.example.ui.theme.SafeGreen
+import com.example.ui.tr
 
 @Composable
 fun UrgentHelpScreen(
@@ -70,7 +72,7 @@ fun UrgentHelpScreen(
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = "Emergency SOS",
+                title = tr("Emergency SOS", "आपातकालीन SOS"),
                 onBackClick = onNavigateBack
             )
         }
@@ -96,17 +98,20 @@ fun UrgentHelpScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "🚨 UNIFIED EMERGENCY CALL",
+                            text = tr("🚨 UNIFIED EMERGENCY CALL", "🚨 एकीकृत आपातकालीन कॉल"),
                             color = Color.White,
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = 15.sp
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Direct connection to India's Emergency Response Support System (112)",
+                            text = tr(
+                                "Direct connection to India's Emergency Response Support System (112)",
+                                "भारत की आपातकालीन सहायता प्रणाली (112) से सीधा संपर्क"
+                            ),
                             color = Color(0xFFFFDAD6),
                             fontSize = 12.sp,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(14.dp))
                         Button(
@@ -120,7 +125,10 @@ fun UrgentHelpScreen(
                             Icon(Icons.Default.Call, contentDescription = null, tint = CrimsonPrimary)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "DIAL 112 NOW (POLICE / MEDICAL / FIRE)",
+                                text = tr(
+                                    "DIAL 112 NOW (POLICE / MEDICAL / FIRE)",
+                                    "अभी 112 डायल करें (पुलिस / मेडिकल / फायर)"
+                                ),
                                 color = CrimsonPrimary,
                                 fontWeight = FontWeight.Black,
                                 fontSize = 13.sp
@@ -149,7 +157,10 @@ fun UrgentHelpScreen(
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "Notice: Tapping 112 opens the official emergency helpline dialer. This app does not claim police dispatch or automatic tracking until confirmed by the responding official authorities.",
+                            text = tr(
+                                "Notice: Tapping 112 opens the official emergency helpline dialer. This app does not claim police dispatch or automatic tracking until confirmed by the responding official authorities.",
+                                "सूचना: 112 दबाने पर आधिकारिक आपातकालीन डायलर खुलता है। जब तक संबंधित अधिकारी पुष्टि न करें, यह ऐप पुलिस डिस्पैच या स्वचालित ट्रैकिंग का दावा नहीं करता।"
+                            ),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 15.sp
@@ -174,7 +185,10 @@ fun UrgentHelpScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Broadcast SOS Alert to Trusted Contacts",
+                                text = tr(
+                                    "Broadcast SOS Alert to Trusted Contacts",
+                                    "विश्वसनीय संपर्कों को SOS अलर्ट भेजें"
+                                ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 15.sp
                             )
@@ -183,7 +197,13 @@ fun UrgentHelpScreen(
                         if (sosState.statusMessage != null) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Card(
-                                colors = CardDefaults.cardColors(containerColor = if (sosState.alertDispatched) SafeGreen.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = if (sosState.alertDispatched) {
+                                        SafeGreen.copy(alpha = 0.15f)
+                                    } else {
+                                        MaterialTheme.colorScheme.surfaceVariant
+                                    }
+                                ),
                                 shape = RoundedCornerShape(8.dp)
                             ) {
                                 Text(
@@ -205,7 +225,7 @@ fun UrgentHelpScreen(
                                 customMsg = it
                                 viewModel.updateCustomEmergencyMessage(it)
                             },
-                            label = { Text("Emergency Message") },
+                            label = { Text(tr("Emergency Message", "आपातकालीन संदेश")) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .testTag("urgent_sos_message_input"),
@@ -218,8 +238,22 @@ fun UrgentHelpScreen(
                         OutlinedTextField(
                             value = attachEvidenceNote,
                             onValueChange = { attachEvidenceNote = it },
-                            label = { Text("Optional Evidence / Situation Details") },
-                            placeholder = { Text("e.g., Near Bus Stop #4, White sedan") },
+                            label = {
+                                Text(
+                                    tr(
+                                        "Optional Evidence / Situation Details",
+                                        "वैकल्पिक सबूत / स्थिति का विवरण"
+                                    )
+                                )
+                            },
+                            placeholder = {
+                                Text(
+                                    tr(
+                                        "e.g., Near Bus Stop #4, White sedan",
+                                        "जैसे: बस स्टॉप #4 के पास, सफेद कार"
+                                    )
+                                )
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .testTag("urgent_sos_evidence_input"),
@@ -239,9 +273,15 @@ fun UrgentHelpScreen(
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = if (currentLocation != null) {
-                                    "GPS Attached: ${currentLocation?.toFormattedCoordinates()}"
+                                    tr(
+                                        "GPS Attached: ${currentLocation?.toFormattedCoordinates()}",
+                                        "GPS संलग्न: ${currentLocation?.toFormattedCoordinates()}"
+                                    )
                                 } else {
-                                    "Acquiring GPS location for map link..."
+                                    tr(
+                                        "Acquiring GPS location for map link...",
+                                        "मैप लिंक के लिए GPS लोकेशन प्राप्त की जा रही है..."
+                                    )
                                 },
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -262,7 +302,10 @@ fun UrgentHelpScreen(
                         ) {
                             Icon(Icons.Default.Warning, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("SEND SOS TO ALL CONTACTS NOW", fontWeight = FontWeight.Bold)
+                            Text(
+                                text = tr("SEND SOS TO ALL CONTACTS NOW", "सभी संपर्कों को अभी SOS भेजें"),
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                 }
@@ -282,7 +325,10 @@ fun UrgentHelpScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Emergency Contacts (${contacts.size})",
+                                text = tr(
+                                    "Emergency Contacts (${contacts.size})",
+                                    "आपातकालीन संपर्क (${contacts.size})"
+                                ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
                             )
@@ -290,13 +336,16 @@ fun UrgentHelpScreen(
                                 onClick = onNavigateToContacts,
                                 modifier = Modifier.testTag("manage_contacts_from_sos")
                             ) {
-                                Text("Manage", fontSize = 12.sp)
+                                Text(tr("Manage", "प्रबंधित करें"), fontSize = 12.sp)
                             }
                         }
 
                         if (contacts.isEmpty()) {
                             Text(
-                                text = "No trusted contacts added yet. Tap Manage to add parents, guardians, or friends.",
+                                text = tr(
+                                    "No trusted contacts added yet. Tap Manage to add parents, guardians, or friends.",
+                                    "अभी कोई विश्वसनीय संपर्क नहीं जोड़ा गया है। माता-पिता, अभिभावक या दोस्तों को जोड़ने के लिए 'प्रबंधित करें' पर टैप करें।"
+                                ),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(vertical = 8.dp)
@@ -312,7 +361,9 @@ fun UrgentHelpScreen(
                                 ) {
                                     Column {
                                         Text(
-                                            text = contact.name + if (contact.isPrimary) " (Primary)" else "",
+                                            text = contact.name + if (contact.isPrimary) {
+                                                tr(" (Primary)", " (प्राथमिक)")
+                                            } else "",
                                             fontWeight = FontWeight.SemiBold,
                                             fontSize = 13.sp
                                         )
@@ -330,7 +381,7 @@ fun UrgentHelpScreen(
                                     ) {
                                         Icon(Icons.Default.Call, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Call", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
+                                        Text(tr("Call", "कॉल"), color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
                                     }
                                 }
                             }
@@ -350,7 +401,14 @@ fun UrgentHelpScreen(
                 ) {
                     Icon(Icons.Default.Mic, contentDescription = null, tint = CrimsonPrimary)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Record Audio / Video SOS Evidence", color = CrimsonPrimary, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = tr(
+                            "Record Audio / Video SOS Evidence",
+                            "ऑडियो / वीडियो SOS सबूत रिकॉर्ड करें"
+                        ),
+                        color = CrimsonPrimary,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }

@@ -35,17 +35,18 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ui.AppLanguage
 import com.example.ui.RakshaViewModel
 import com.example.ui.screens.AiAssistantScreen
 import com.example.ui.screens.AmbulanceScreen
 import com.example.ui.screens.AssaultSupportScreen
 import com.example.ui.screens.BeingFollowedScreen
+import com.example.ui.screens.BetaPadhaoScreen
 import com.example.ui.screens.ChildSafetyScreen
 import com.example.ui.screens.ContactsScreen
 import com.example.ui.screens.CybercrimeScreen
@@ -75,22 +76,24 @@ enum class Screen {
     LIVE_LOCATION,
     EVIDENCE_RECORDING,
     AI_ASSISTANT,
-    REPORTS
+    REPORTS,
+    BETA_PADHAO
 }
 
 private data class BottomNavItem(
     val screen: Screen,
     val label: String,
+    val labelHi: String,
     val icon: ImageVector,
     val selectedIcon: ImageVector
 )
 
 private val bottomNavItems = listOf(
-    BottomNavItem(Screen.HOME, "Home", Icons.Outlined.Home, Icons.Filled.Home),
-    BottomNavItem(Screen.LIVE_LOCATION, "Map", Icons.Outlined.Map, Icons.Filled.Map),
-    BottomNavItem(Screen.CONTACTS, "Contacts", Icons.Outlined.People, Icons.Filled.People),
-    BottomNavItem(Screen.AI_ASSISTANT, "Rakshak", Icons.Outlined.AutoAwesome, Icons.Filled.AutoAwesome),
-    BottomNavItem(Screen.REPORTS, "Vault", Icons.Outlined.Shield, Icons.Filled.Shield)
+    BottomNavItem(Screen.HOME, "Home", "होम", Icons.Outlined.Home, Icons.Filled.Home),
+    BottomNavItem(Screen.LIVE_LOCATION, "Map", "मैप", Icons.Outlined.Map, Icons.Filled.Map),
+    BottomNavItem(Screen.CONTACTS, "Contacts", "संपर्क", Icons.Outlined.People, Icons.Filled.People),
+    BottomNavItem(Screen.AI_ASSISTANT, "Rakshak", "रक्षक", Icons.Outlined.AutoAwesome, Icons.Filled.AutoAwesome),
+    BottomNavItem(Screen.REPORTS, "Vault", "वॉल्ट", Icons.Outlined.Shield, Icons.Filled.Shield)
 )
 
 class MainActivity : ComponentActivity() {
@@ -100,6 +103,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        AppLanguage.init(this)
         checkSosIntent(intent)
 
         setContent {
@@ -179,18 +183,19 @@ fun RakshaKavachApp(
                 ) {
                     bottomNavItems.forEach { item ->
                         val selected = currentScreen == item.screen
+                        val displayLabel = if (AppLanguage.isHindi) item.labelHi else item.label
                         NavigationBarItem(
                             selected = selected,
                             onClick = { switchTab(item.screen) },
                             icon = {
                                 Icon(
                                     imageVector = if (selected) item.selectedIcon else item.icon,
-                                    contentDescription = item.label
+                                    contentDescription = displayLabel
                                 )
                             },
                             label = {
                                 Text(
-                                    text = item.label,
+                                    text = displayLabel,
                                     fontSize = 11.sp,
                                     fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium
                                 )
@@ -229,7 +234,8 @@ fun RakshaKavachApp(
                     onNavigateToLiveLocation = { switchTab(Screen.LIVE_LOCATION) },
                     onNavigateToEvidenceRecording = { navigateTo(Screen.EVIDENCE_RECORDING) },
                     onNavigateToAiAssistant = { switchTab(Screen.AI_ASSISTANT) },
-                    onNavigateToReports = { switchTab(Screen.REPORTS) }
+                    onNavigateToReports = { switchTab(Screen.REPORTS) },
+                    onNavigateToBetaPadhao = { navigateTo(Screen.BETA_PADHAO) }
                 )
 
                 Screen.URGENT_HELP -> UrgentHelpScreen(
@@ -308,6 +314,10 @@ fun RakshaKavachApp(
 
                 Screen.REPORTS -> IncidentReportsListScreen(
                     viewModel = viewModel,
+                    onNavigateBack = { navigateBack() }
+                )
+
+                Screen.BETA_PADHAO -> BetaPadhaoScreen(
                     onNavigateBack = { navigateBack() }
                 )
             }

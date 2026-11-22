@@ -16,12 +16,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.HealthAndSafety
 import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -51,6 +49,7 @@ import com.example.ui.RakshaViewModel
 import com.example.ui.components.RakshaTopAppBar
 import com.example.ui.theme.CrimsonPrimary
 import com.example.ui.theme.SafeGreen
+import com.example.ui.tr
 
 @Composable
 fun AssaultSupportScreen(
@@ -69,7 +68,7 @@ fun AssaultSupportScreen(
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = "Case of Assault — Immediate Aid",
+                title = tr("Case of Assault — Immediate Aid", "हमला / हिंसा — तत्काल सहायता"),
                 onBackClick = onNavigateBack
             )
         }
@@ -100,7 +99,10 @@ fun AssaultSupportScreen(
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "FIRST PRIORITY: PHYSICAL SAFETY & MEDICAL CARE",
+                                text = tr(
+                                    "FIRST PRIORITY: PHYSICAL SAFETY & MEDICAL CARE",
+                                    "पहली प्राथमिकता: शारीरिक सुरक्षा और चिकित्सा सहायता"
+                                ),
                                 color = Color.White,
                                 fontWeight = FontWeight.Black,
                                 fontSize = 14.sp
@@ -108,7 +110,10 @@ fun AssaultSupportScreen(
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "You are NOT required to document evidence or fill any forms right now. Your immediate health and protection come first.",
+                            text = tr(
+                                "You are NOT required to document evidence or fill any forms right now. Your immediate health and protection come first.",
+                                "अभी सबूत लिखने या कोई फॉर्म भरने की आवश्यकता नहीं है। आपका स्वास्थ्य और सुरक्षा सबसे पहले है।"
+                            ),
                             color = Color(0xFFFFDAD6),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -129,7 +134,11 @@ fun AssaultSupportScreen(
                             ) {
                                 Icon(Icons.Default.Call, contentDescription = null, tint = CrimsonPrimary)
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text("DIAL 112", color = CrimsonPrimary, fontWeight = FontWeight.Black)
+                                Text(
+                                    text = tr("DIAL 112", "112 डायल करें"),
+                                    color = CrimsonPrimary,
+                                    fontWeight = FontWeight.Black
+                                )
                             }
                             Button(
                                 onClick = { EmergencyAlertHelper.dialNumber(context, "108") },
@@ -141,7 +150,11 @@ fun AssaultSupportScreen(
                             ) {
                                 Icon(Icons.Default.LocalHospital, contentDescription = null, tint = CrimsonPrimary)
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text("DIAL 108", color = CrimsonPrimary, fontWeight = FontWeight.Black)
+                                Text(
+                                    text = tr("DIAL 108", "108 डायल करें"),
+                                    color = CrimsonPrimary,
+                                    fontWeight = FontWeight.Black
+                                )
                             }
                         }
                     }
@@ -165,14 +178,20 @@ fun AssaultSupportScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Your Legal Rights & Medical Rights in India",
+                                text = tr(
+                                    "Your Legal Rights & Medical Rights in India",
+                                    "भारत में आपके कानूनी और चिकित्सा अधिकार"
+                                ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
                             )
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "• ZERO FIR: You can register an FIR at ANY police station, regardless of where the incident took place.\n• FREE MEDICAL EXAMINATION & TREATMENT: Under Section 357C of CrPC / BNSS, all government and private hospitals are legally bound to provide immediate, free first aid and medical care.\n• ONE STOP CENTERS (SAKHI): Integrated medical, legal, psychological, and temporary shelter support under one roof.\n• NALSA FREE LEGAL AID: Dial 15100 for toll-free legal advice by government-appointed legal advocates.",
+                            text = tr(
+                                "• ZERO FIR: You can register an FIR at ANY police station, regardless of where the incident took place.\n• FREE MEDICAL EXAMINATION & TREATMENT: Under Section 357C of CrPC / BNSS, all government and private hospitals are legally bound to provide immediate, free first aid and medical care.\n• ONE STOP CENTERS (SAKHI): Integrated medical, legal, psychological, and temporary shelter support under one roof.\n• NALSA FREE LEGAL AID: Dial 15100 for toll-free legal advice by government-appointed legal advocates.",
+                                "• ज़ीरो FIR: घटना कहीं भी हुई हो, आप किसी भी पुलिस स्टेशन में FIR दर्ज करा सकती हैं।\n• निःशुल्क चिकित्सा जांच और इलाज: CrPC की धारा 357C / BNSS के तहत सभी सरकारी और निजी अस्पताल तुरंत और मुफ्त प्राथमिक उपचार देने के लिए कानूनी रूप से बाध्य हैं।\n• वन स्टॉप सेंटर (सखी): एक ही छत के नीचे चिकित्सा, कानूनी, मनोवैज्ञानिक और अस्थायी आश्रय सहायता।\n• NALSA मुफ्त कानूनी सहायता: सरकारी वकीलों से निःशुल्क कानूनी सलाह के लिए 15100 डायल करें।"
+                            ),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 18.sp
@@ -182,7 +201,12 @@ fun AssaultSupportScreen(
                             onClick = { EmergencyAlertHelper.dialNumber(context, "15100") },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("Call 15100 (National Legal Services Authority - NALSA)")
+                            Text(
+                                tr(
+                                    "Call 15100 (National Legal Services Authority - NALSA)",
+                                    "15100 पर कॉल करें (राष्ट्रीय विधिक सेवा प्राधिकरण - NALSA)"
+                                )
+                            )
                         }
                     }
                 }
@@ -197,14 +221,20 @@ fun AssaultSupportScreen(
                 ) {
                     Column(modifier = Modifier.padding(14.dp)) {
                         Text(
-                            text = "⚠️ Medical Evidence Preservation (If Safe)",
+                            text = tr(
+                                "⚠️ Medical Evidence Preservation (If Safe)",
+                                "⚠️ चिकित्सा सबूत सुरक्षित रखना (यदि सुरक्षित हो)"
+                            ),
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp,
                             color = Color(0xFF78350F)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "• If planning a medical exam, try not to wash, bathe, or change clothes beforehand as forensic evidence can be gathered.\n• If clothes are changed, store unwashed clothes in a clean paper bag.\n• Again: Your physical health and immediate emotional safety come first before any evidence.",
+                            text = tr(
+                                "• If planning a medical exam, try not to wash, bathe, or change clothes beforehand as forensic evidence can be gathered.\n• If clothes are changed, store unwashed clothes in a clean paper bag.\n• Again: Your physical health and immediate emotional safety come first before any evidence.",
+                                "• यदि मेडिकल जांच करवानी है, तो पहले नहाने, धोने या कपड़े बदलने से बचें ताकि फॉरेंसिक सबूत सुरक्षित रह सकें।\n• यदि कपड़े बदलें, तो बिना धोए कपड़े एक साफ कागज़ के बैग में रखें।\n• याद रखें: किसी भी सबूत से पहले आपका शारीरिक स्वास्थ्य और मानसिक सुरक्षा सबसे महत्वपूर्ण है।"
+                            ),
                             fontSize = 11.sp,
                             color = Color(0xFF78350F),
                             lineHeight = 16.sp
@@ -225,14 +255,17 @@ fun AssaultSupportScreen(
                             Icon(Icons.Default.Lock, contentDescription = null, tint = SafeGreen, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Optional Private Incident Note",
+                                text = tr("Optional Private Incident Note", "वैकल्पिक निजी घटना नोट"),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
                             )
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Only if you feel calm and ready. Stored strictly on device.",
+                            text = tr(
+                                "Only if you feel calm and ready. Stored strictly on device.",
+                                "केवल तभी लिखें जब आप शांत और तैयार महसूस करें। यह केवल आपके फोन में सुरक्षित रहेगा।"
+                            ),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -242,7 +275,9 @@ fun AssaultSupportScreen(
                         OutlinedTextField(
                             value = incidentText,
                             onValueChange = { incidentText = it },
-                            label = { Text("Private notes / Account of event") },
+                            label = {
+                                Text(tr("Private notes / Account of event", "निजी नोट्स / घटना का विवरण"))
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .testTag("assault_notes_input"),
@@ -254,8 +289,10 @@ fun AssaultSupportScreen(
                         OutlinedTextField(
                             value = locationInput,
                             onValueChange = { locationInput = it },
-                            label = { Text("Location Landmark") },
-                            placeholder = { Text(currentLocation?.toFormattedCoordinates() ?: "Area name") },
+                            label = { Text(tr("Location Landmark", "स्थान / पहचान चिह्न")) },
+                            placeholder = {
+                                Text(currentLocation?.toFormattedCoordinates() ?: tr("Area name", "क्षेत्र का नाम"))
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true
                         )
@@ -264,7 +301,10 @@ fun AssaultSupportScreen(
 
                         if (isSaved) {
                             Text(
-                                text = "Note saved locally to your device vault.",
+                                text = tr(
+                                    "Note saved locally to your device vault.",
+                                    "नोट आपके फोन के सुरक्षित वॉल्ट में सहेजा गया।"
+                                ),
                                 color = SafeGreen,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp,
@@ -290,7 +330,12 @@ fun AssaultSupportScreen(
                                 .fillMaxWidth()
                                 .testTag("save_assault_report_button")
                         ) {
-                            Text("Save Locally for Personal / Legal Reference")
+                            Text(
+                                tr(
+                                    "Save Locally for Personal / Legal Reference",
+                                    "निजी / कानूनी संदर्भ के लिए फोन में सहेजें"
+                                )
+                            )
                         }
                     }
                 }

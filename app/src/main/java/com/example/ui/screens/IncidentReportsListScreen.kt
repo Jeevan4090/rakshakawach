@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.EmergencyAlertHelper
@@ -42,6 +43,7 @@ import com.example.data.entity.IncidentReport
 import com.example.ui.RakshaViewModel
 import com.example.ui.components.RakshaTopAppBar
 import com.example.ui.theme.SafeGreen
+import com.example.ui.tr
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -57,7 +59,7 @@ fun IncidentReportsListScreen(
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = "Confidential Incident Vault",
+                title = tr("Confidential Incident Vault", "गोपनीय घटना वॉल्ट"),
                 onBackClick = onNavigateBack
             )
         }
@@ -90,12 +92,15 @@ fun IncidentReportsListScreen(
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
                             Text(
-                                text = "Encrypted Local Storage Only",
+                                text = tr("Encrypted Local Storage Only", "केवल एन्क्रिप्टेड लोकल स्टोरेज"),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 13.sp
                             )
                             Text(
-                                text = "All reports are stored strictly in your app's private sandbox database. You retain complete ownership and control.",
+                                text = tr(
+                                    "All reports are stored strictly in your app's private sandbox database. You retain complete ownership and control.",
+                                    "सभी रिपोर्ट केवल आपके ऐप के निजी डेटाबेस में सुरक्षित रहती हैं। इन पर पूरा अधिकार और नियंत्रण केवल आपका है।"
+                                ),
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -127,16 +132,19 @@ fun IncidentReportsListScreen(
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                text = "Vault is Currently Empty",
+                                text = tr("Vault is Currently Empty", "वॉल्ट अभी खाली है"),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "When you document incidents under Harassment, Assault, Workplace, Cybercrime, or Child Safety, they will appear here.",
+                                text = tr(
+                                    "When you document incidents under Harassment, Assault, Workplace, Cybercrime, or Child Safety, they will appear here.",
+                                    "जब आप उत्पीड़न, हमला, कार्यस्थल, साइबर क्राइम या बाल सुरक्षा के तहत कोई घटना दर्ज करेंगी, तो वह यहाँ दिखाई देगी।"
+                                ),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                                textAlign = TextAlign.Center
                             )
                         }
                     }
@@ -220,7 +228,7 @@ fun ReportCardItem(
             if (report.locationDescription.isNotBlank()) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "📍 Location: ${report.locationDescription}",
+                    text = tr("📍 Location: ", "📍 स्थान: ") + report.locationDescription,
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -229,7 +237,7 @@ fun ReportCardItem(
             if (report.perpetratorDetails.isNotBlank()) {
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "👤 Perpetrator: ${report.perpetratorDetails}",
+                    text = tr("👤 Perpetrator: ", "👤 आरोपी: ") + report.perpetratorDetails,
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -238,7 +246,7 @@ fun ReportCardItem(
             if (report.evidenceNotes.isNotBlank()) {
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "📁 Evidence: ${report.evidenceNotes}",
+                    text = tr("📁 Evidence: ", "📁 सबूत: ") + report.evidenceNotes,
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -256,7 +264,7 @@ fun ReportCardItem(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Share,
-                        contentDescription = "Export / Share",
+                        contentDescription = tr("Export / Share", "निर्यात / साझा करें"),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(20.dp)
                     )
@@ -268,7 +276,7 @@ fun ReportCardItem(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete",
+                        contentDescription = tr("Delete", "हटाएँ"),
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(20.dp)
                     )

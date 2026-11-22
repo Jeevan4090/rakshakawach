@@ -50,6 +50,7 @@ import com.example.ui.components.RakshaTopAppBar
 import com.example.ui.theme.SageDeep
 import com.example.ui.theme.SaffronDeep
 import com.example.ui.theme.SaffronTint
+import com.example.ui.tr
 
 @Composable
 fun CybercrimeScreen(
@@ -81,7 +82,7 @@ fun CybercrimeScreen(
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = "Cybercrime help",
+                title = tr("Cybercrime help", "साइबर क्राइम सहायता"),
                 onBackClick = onNavigateBack
             )
         }
@@ -115,8 +116,8 @@ fun CybercrimeScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
-                            Text("Call 1930", fontSize = 14.sp, fontWeight = FontWeight.Medium)
-                            Text("Cyber fraud", fontSize = 11.sp)
+                            Text(tr("Call 1930", "1930 पर कॉल करें"), fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                            Text(tr("Cyber fraud", "साइबर धोखाधड़ी"), fontSize = 11.sp)
                         }
                     }
 
@@ -135,8 +136,8 @@ fun CybercrimeScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
-                            Text("Call 112", fontSize = 14.sp, fontWeight = FontWeight.Medium)
-                            Text("Police", fontSize = 11.sp)
+                            Text(tr("Call 112", "112 पर कॉल करें"), fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                            Text(tr("Police", "पुलिस"), fontSize = 11.sp)
                         }
                     }
                 }
@@ -145,8 +146,11 @@ fun CybercrimeScreen(
             item {
                 NoticeCard(
                     icon = Icons.Outlined.AccountBalance,
-                    title = "Lost money to fraud?",
-                    text = "Call 1930 as soon as you can. The first few hours matter most for freezing the receiving account. Then call your bank to block cards and net banking. Rakshakavach never asks for OTPs, PINs, or banking passwords.",
+                    title = tr("Lost money to fraud?", "धोखाधड़ी में पैसे चले गए?"),
+                    text = tr(
+                        "Call 1930 as soon as you can. The first few hours matter most for freezing the receiving account. Then call your bank to block cards and net banking. Rakshakavach never asks for OTPs, PINs, or banking passwords.",
+                        "जितनी जल्दी हो सके 1930 पर कॉल करें। धोखेबाज़ का खाता फ्रीज़ कराने के लिए शुरुआती कुछ घंटे सबसे अहम होते हैं। इसके बाद अपने बैंक को कॉल करके कार्ड और नेट बैंकिंग ब्लॉक कराएँ। रक्षाकवच कभी भी OTP, PIN या बैंकिंग पासवर्ड नहीं माँगता।"
+                    ),
                     container = SaffronTint,
                     content = SaffronDeep
                 )
@@ -154,10 +158,16 @@ fun CybercrimeScreen(
 
             item {
                 SurfaceCard {
-                    CardHeader(icon = Icons.Outlined.Security, title = "National Cyber Crime Reporting Portal")
+                    CardHeader(
+                        icon = Icons.Outlined.Security,
+                        title = tr("National Cyber Crime Reporting Portal", "राष्ट्रीय साइबर क्राइम रिपोर्टिंग पोर्टल")
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "The Ministry of Home Affairs portal to report cyberstalking, online harassment, obscene content, morphed photos, and financial fraud, formally or anonymously.",
+                        text = tr(
+                            "The Ministry of Home Affairs portal to report cyberstalking, online harassment, obscene content, morphed photos, and financial fraud, formally or anonymously.",
+                            "गृह मंत्रालय का आधिकारिक पोर्टल, जहाँ आप साइबर स्टॉकिंग, ऑनलाइन उत्पीड़न, आपत्तिजनक सामग्री, मॉर्फ्ड फोटो और वित्तीय धोखाधड़ी की औपचारिक या गुमनाम शिकायत दर्ज कर सकती हैं।"
+                        ),
                         fontSize = 13.sp,
                         lineHeight = 19.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -178,17 +188,23 @@ fun CybercrimeScreen(
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Open cybercrime.gov.in")
+                        Text(tr("Open cybercrime.gov.in", "cybercrime.gov.in खोलें"))
                     }
                 }
             }
 
             item {
                 SurfaceCard {
-                    CardHeader(icon = Icons.Outlined.Shield, title = "Evidence and account checklist")
+                    CardHeader(
+                        icon = Icons.Outlined.Shield,
+                        title = tr("Evidence and account checklist", "सबूत और अकाउंट सुरक्षा चेकलिस्ट")
+                    )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "$doneCount of ${checklistState.size} done",
+                        text = tr(
+                            "$doneCount of ${checklistState.size} done",
+                            "${checklistState.size} में से $doneCount पूर्ण"
+                        ),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -197,45 +213,67 @@ fun CybercrimeScreen(
                     CyberChecklistItem(
                         checked = checklistState["screenshots"] == true,
                         onCheckedChange = { checklistState["screenshots"] = it },
-                        title = "Screenshots with dates and times",
-                        subtitle = "Capture abusive posts, comments, emails, or chats clearly."
+                        title = tr("Screenshots with dates and times", "तारीख और समय के साथ स्क्रीनशॉट"),
+                        subtitle = tr(
+                            "Capture abusive posts, comments, emails, or chats clearly.",
+                            "अपमानजनक पोस्ट, कमेंट, ईमेल या चैट का स्पष्ट स्क्रीनशॉट लें।"
+                        )
                     )
                     CyberChecklistItem(
                         checked = checklistState["url_profile"] == true,
                         onCheckedChange = { checklistState["url_profile"] = it },
-                        title = "Profile links and URLs",
-                        subtitle = "Copy links to offending accounts, posts, or groups before they're deleted."
+                        title = tr("Profile links and URLs", "प्रोफ़ाइल लिंक और URL"),
+                        subtitle = tr(
+                            "Copy links to offending accounts, posts, or groups before they're deleted.",
+                            "हटाए जाने से पहले संबंधित अकाउंट, पोस्ट या ग्रुप के लिंक कॉपी कर लें।"
+                        )
                     )
                     CyberChecklistItem(
                         checked = checklistState["txn_details"] == true,
                         onCheckedChange = { checklistState["txn_details"] = it },
-                        title = "Transaction and UPI reference numbers",
-                        subtitle = "Save debit SMS alerts, UPI references, and bank statements."
+                        title = tr("Transaction and UPI reference numbers", "लेन-देन और UPI रेफरेंस नंबर"),
+                        subtitle = tr(
+                            "Save debit SMS alerts, UPI references, and bank statements.",
+                            "पैसे कटने का SMS, UPI रेफरेंस नंबर और बैंक स्टेटमेंट सुरक्षित रखें।"
+                        )
                     )
                     CyberChecklistItem(
                         checked = checklistState["bank_contacted"] == true,
                         onCheckedChange = { checklistState["bank_contacted"] = it },
-                        title = "Bank alerted",
-                        subtitle = "Asked your bank to block or reverse compromised cards."
+                        title = tr("Bank alerted", "बैंक को सूचित किया"),
+                        subtitle = tr(
+                            "Asked your bank to block or reverse compromised cards.",
+                            "बैंक से प्रभावित कार्ड ब्लॉक करने या लेन-देन रोकने के लिए कहा।"
+                        )
                     )
                     CyberChecklistItem(
                         checked = checklistState["two_factor"] == true,
                         onCheckedChange = { checklistState["two_factor"] = it },
-                        title = "Two-factor authentication on",
-                        subtitle = "Secure your email, Instagram, WhatsApp, and other accounts."
+                        title = tr("Two-factor authentication on", "टू-फैक्टर ऑथेंटिकेशन चालू करें"),
+                        subtitle = tr(
+                            "Secure your email, Instagram, WhatsApp, and other accounts.",
+                            "अपना ईमेल, Instagram, WhatsApp और अन्य खाते सुरक्षित करें।"
+                        )
                     )
                     CyberChecklistItem(
                         checked = checklistState["account_blocked"] == true,
                         onCheckedChange = { checklistState["account_blocked"] = it },
-                        title = "Reported and blocked on the platform",
-                        subtitle = "Use the app's reporting tools after saving your screenshots."
+                        title = tr("Reported and blocked on the platform", "प्लेटफ़ॉर्म पर रिपोर्ट और ब्लॉक किया"),
+                        subtitle = tr(
+                            "Use the app's reporting tools after saving your screenshots.",
+                            "स्क्रीनशॉट सहेजने के बाद ऐप के रिपोर्टिंग टूल से अकाउंट ब्लॉक करें।"
+                        )
                     )
                 }
             }
 
             item {
                 SurfaceCard {
-                    CardHeader(icon = Icons.Outlined.Lock, title = "Private incident note", tint = SageDeep)
+                    CardHeader(
+                        icon = Icons.Outlined.Lock,
+                        title = tr("Private incident note", "निजी घटना नोट"),
+                        tint = SageDeep
+                    )
                     Spacer(modifier = Modifier.height(14.dp))
 
                     FormField(
@@ -244,7 +282,7 @@ fun CybercrimeScreen(
                             platformName = it
                             isSaved = false
                         },
-                        label = "Platform",
+                        label = tr("Platform", "प्लेटफ़ॉर्म"),
                         placeholder = "WhatsApp, Instagram, Telegram, UPI"
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -254,7 +292,7 @@ fun CybercrimeScreen(
                             suspectHandle = it
                             isSaved = false
                         },
-                        label = "Suspect's handle, number, or URL"
+                        label = tr("Suspect's handle, number, or URL", "संदिग्ध का हैंडल, नंबर या URL")
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     FormField(
@@ -264,11 +302,16 @@ fun CybercrimeScreen(
                             incidentError = false
                             isSaved = false
                         },
-                        label = "What happened",
-                        placeholder = "The timeline, the threat, or the loss",
+                        label = tr("What happened", "क्या हुआ"),
+                        placeholder = tr(
+                            "The timeline, the threat, or the loss",
+                            "घटना का समय, धमकी या नुकसान का विवरण"
+                        ),
                         singleLine = false,
                         minLines = 4,
-                        error = if (incidentError) "Describe what happened to save the note" else null,
+                        error = if (incidentError) {
+                            tr("Describe what happened to save the note", "नोट सहेजने के लिए घटना का विवरण लिखें")
+                        } else null,
                         modifier = Modifier.testTag("cyber_incident_description_input")
                     )
 
@@ -294,7 +337,7 @@ fun CybercrimeScreen(
                             .height(48.dp)
                             .testTag("save_cyber_report_button")
                     ) {
-                        Text("Save note to vault")
+                        Text(tr("Save note to vault", "वॉल्ट में नोट सहेजें"))
                     }
 
                     if (isSaved) {
@@ -304,13 +347,13 @@ fun CybercrimeScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Note saved to your vault",
+                                text = tr("Note saved to your vault", "नोट आपके वॉल्ट में सहेजा गया"),
                                 color = SageDeep,
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 13.sp
                             )
                             TextButton(onClick = onNavigateToReports) {
-                                Text("View in vault")
+                                Text(tr("View in vault", "वॉल्ट में देखें"))
                             }
                         }
                     }
