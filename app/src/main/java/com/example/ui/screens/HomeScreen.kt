@@ -78,6 +78,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
 import com.example.data.EmergencyAlertHelper
+import com.example.ui.AppLang
 import com.example.ui.AppLanguage
 import com.example.ui.RakshaViewModel
 import com.example.ui.components.SosEmergencyButton
@@ -94,8 +95,10 @@ private data class HelpCategory(
     val num: Int,
     val title: String,
     val titleHi: String,
+    val titleBn: String,
     val subtitle: String,
     val subtitleHi: String,
+    val subtitleBn: String,
     val icon: ImageVector,
     val badge: String?,
     val accent: Color
@@ -103,51 +106,60 @@ private data class HelpCategory(
 
 private val quickEmergencyCategories = listOf(
     HelpCategory(
-        1, "I Need Help Urgently", "मुझे तुरंत मदद चाहिए",
-        "Immediate SOS alert & 112", "तुरंत SOS अलर्ट और 112",
+        1,
+        "I Need Help Urgently", "मुझे तुरंत मदद चाहिए", "আমার জরুরি সাহায্য দরকার",
+        "Immediate SOS alert & 112", "तुरंत SOS अलर्ट और 112", "তাৎক্ষণিক SOS অ্যালার্ট ও 112",
         Icons.Outlined.Emergency, "112", Color(0xFFD93848)
     ),
     HelpCategory(
-        2, "Someone Is Following Me", "कोई मेरा पीछा कर रहा है",
-        "Discreet alerts & nearest police", "गुप्त अलर्ट और नज़दीकी पुलिस",
+        2,
+        "Someone Is Following Me", "कोई मेरा पीछा कर रहा है", "কেউ আমাকে অনুসরণ করছে",
+        "Discreet alerts & nearest police", "गुप्त अलर्ट और नज़दीकी पुलिस", "গোপন অ্যালার্ট ও নিকটতম থানা",
         Icons.AutoMirrored.Outlined.DirectionsRun, "112", Color(0xFFE05D38)
     ),
     HelpCategory(
-        3, "Medical Emergency", "मेडिकल इमरजेंसी",
-        "Call ambulance (108 / 112)", "एम्बुलेंस बुलाएँ (108 / 112)",
+        3,
+        "Medical Emergency", "मेडिकल इमरजेंसी", "মেডিকেল জরুরি অবস্থা",
+        "Call ambulance (108 / 112)", "एम्बुलेंस बुलाएँ (108 / 112)", "অ্যাম্বুলেন্স ডাকুন (108 / 112)",
         Icons.Outlined.LocalHospital, "108", Color(0xFF0E8A72)
     ),
     HelpCategory(
-        4, "Need Assistance", "सहायता चाहिए",
-        "Verified helplines & support", "सत्यापित हेल्पलाइन और मदद",
+        4,
+        "Need Assistance", "सहायता चाहिए", "সহায়তা প্রয়োজন",
+        "Verified helplines & support", "सत्यापित हेल्पलाइन और मदद", "যাচাইকৃত হেল্পলাইন ও সহায়তা",
         Icons.Outlined.PhoneInTalk, "181", Color(0xFF6A48D7)
     )
 )
 
 private val supportCategories = listOf(
     HelpCategory(
-        5, "Harassment Support", "उत्पीड़न सहायता",
-        "Document & know your options", "सबूत सहेजें और विकल्प जानें",
+        5,
+        "Harassment Support", "उत्पीड़न सहायता", "হয়রানি সহায়তা",
+        "Document & know your options", "सबूत सहेजें और विकल्प जानें", "প্রমাণ সংরক্ষণ করুন ও অধিকার জানুন",
         Icons.Outlined.Campaign, "1091", Color(0xFFD97706)
     ),
     HelpCategory(
-        6, "Assault Support", "हमला / हिंसा सहायता",
-        "Medical help & legal rights", "चिकित्सा मदद और कानूनी अधिकार",
+        6,
+        "Assault Support", "हमला / हिंसा सहायता", "হামলা / নির্যাতন সহায়তা",
+        "Medical help & legal rights", "चिकित्सा मदद और कानूनी अधिकार", "চিকিৎসা সহায়তা ও আইনি অধিকার",
         Icons.Outlined.Gavel, "181", Color(0xFFBE185D)
     ),
     HelpCategory(
-        7, "Workplace POSH", "कार्यस्थल सुरक्षा (POSH)",
-        "POSH Act & IC filing guide", "POSH कानून और शिकायत गाइड",
+        7,
+        "Workplace POSH", "कार्यस्थल सुरक्षा (POSH)", "কর্মক্ষেত্র সুরক্ষা (POSH)",
+        "POSH Act & IC filing guide", "POSH कानून और शिकायत गाइड", "POSH আইন ও অভিযোগ নির্দেশিকা",
         Icons.Outlined.Work, "POSH", Color(0xFF2563EB)
     ),
     HelpCategory(
-        8, "Cybercrime", "साइबर क्राइम",
-        "Report fraud & keep evidence", "धोखाधड़ी रिपोर्ट और सबूत सहेजें",
+        8,
+        "Cybercrime", "साइबर क्राइम", "সাইবার ক্রাইম",
+        "Report fraud & keep evidence", "धोखाधड़ी रिपोर्ट और सबूत सहेजें", "প্রতারণা রিপোর্ট ও প্রমাণ সংরক্ষণ",
         Icons.Outlined.Security, "1930", Color(0xFF0284C7)
     ),
     HelpCategory(
-        9, "Child Safety", "बाल सुरक्षा",
-        "Childline & POCSO guidance", "चाइल्डलाइन और POCSO मार्गदर्शन",
+        9,
+        "Child Safety", "बाल सुरक्षा", "শিশু সুরক্ষা",
+        "Childline & POCSO guidance", "चाइल्डलाइन और POCSO मार्गदर्शन", "চাইল্ডলাইন ও POCSO নির্দেশিকা",
         Icons.Outlined.ChildCare, "1098", Color(0xFF16A34A)
     )
 )
@@ -215,7 +227,7 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = tr("Rakshakavach", "रक्षाकवच"),
+                            text = tr("Rakshakavach", "रक्षाकवच", "রক্ষাকবচ"),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onBackground
@@ -223,7 +235,8 @@ fun HomeScreen(
                         Text(
                             text = tr(
                                 "Women's security comes first — Jai Hind",
-                                "महिला सुरक्षा सर्वोपरि — जय हिंद"
+                                "महिला सुरक्षा सर्वोपरि — जय हिंद",
+                                "নারী সুরক্ষাই সবার আগে — জয় হিন্দ"
                             ),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -231,17 +244,17 @@ fun HomeScreen(
                     }
                 }
 
-                // Instant EN / हिंदी Language Toggle
+                // Instant EN / हिं / বাং Language Toggle
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
                         .background(MaterialTheme.colorScheme.surface)
                         .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(50))
-                        .clickable { AppLanguage.toggle(context) }
+                        .clickable { AppLanguage.cycle() }
                         .padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
                     Text(
-                        text = if (AppLanguage.isHindi) "EN" else "हिंदी",
+                        text = AppLanguage.current.label,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -254,25 +267,33 @@ fun HomeScreen(
             val locationRow: LocationRow = when {
                 !hasLocPermission -> LocationRow(
                     Icons.Outlined.LocationOff,
-                    tr("Location is off", "लोकेशन बंद है"),
-                    tr("Turn on", "चालू करें"),
+                    tr("Location is off", "लोकेशन बंद है", "লোকেশন বন্ধ আছে"),
+                    tr("Turn on", "चालू करें", "চালু করুন"),
                     SaffronTint, SaffronDeep
                 )
                 isLiveTracking -> LocationRow(
                     Icons.Outlined.MyLocation,
-                    tr("Sharing your live location", "लाइव लोकेशन साझा हो रही है"),
+                    tr(
+                        "Sharing your live location",
+                        "लाइव लोकेशन साझा हो रही है",
+                        "আপনার লাইভ লোকেশন শেয়ার হচ্ছে"
+                    ),
                     null,
                     SageTint, SageDeep
                 )
                 currentLocation != null -> LocationRow(
                     Icons.Outlined.LocationOn,
-                    tr("Location ready", "लोकेशन तैयार है"),
+                    tr("Location ready", "लोकेशन तैयार है", "লোকেশন প্রস্তুত"),
                     null,
                     MaterialTheme.colorScheme.surface, MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 else -> LocationRow(
                     Icons.Outlined.LocationOn,
-                    tr("Finding your location…", "आपकी लोकेशन खोजी जा रही है…"),
+                    tr(
+                        "Finding your location…",
+                        "आपकी लोकेशन खोजी जा रही है…",
+                        "আপনার লোকেশন খোঁজা হচ্ছে…"
+                    ),
                     null,
                     MaterialTheme.colorScheme.surface, MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -304,11 +325,12 @@ fun HomeScreen(
                     icon = Icons.Outlined.PersonAdd,
                     text = tr(
                         "Add a trusted contact so SOS has someone to reach",
-                        "SOS के लिए एक विश्वसनीय संपर्क जोड़ें"
+                        "SOS के लिए एक विश्वसनीय संपर्क जोड़ें",
+                        "SOS পাঠানোর জন্য একজন বিশ্বস্ত যোগাযোগ যোগ করুন"
                     ),
                     container = SaffronTint,
                     content = SaffronDeep,
-                    actionLabel = tr("Add", "जोड़ें"),
+                    actionLabel = tr("Add", "जोड़ें", "যোগ করুন"),
                     onClick = onNavigateToContacts
                 )
             } else {
@@ -316,7 +338,8 @@ fun HomeScreen(
                     icon = Icons.Outlined.Shield,
                     text = tr(
                         "${contacts.size} trusted ${if (contacts.size == 1) "contact" else "contacts"} ready",
-                        "${contacts.size} विश्वसनीय संपर्क तैयार हैं"
+                        "${contacts.size} विश्वसनीय संपर्क तैयार हैं",
+                        "${contacts.size}টি বিশ্বস্ত যোগাযোগ প্রস্তুত"
                     ),
                     container = SageTint,
                     content = SageDeep,
@@ -353,7 +376,7 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 QuickActionTile(
-                    title = tr("Contacts", "संपर्क"),
+                    title = tr("Contacts", "संपर्क", "যোগাযোগ"),
                     icon = Icons.Outlined.People,
                     color = Color(0xFF0E8A72),
                     onClick = onNavigateToContacts,
@@ -361,7 +384,7 @@ fun HomeScreen(
                     testTag = "quick_access_contacts"
                 )
                 QuickActionTile(
-                    title = tr("Location", "लोकेशन"),
+                    title = tr("Location", "लोकेशन", "লোকেশন"),
                     icon = Icons.Outlined.MyLocation,
                     color = Color(0xFF0284C7),
                     onClick = onNavigateToLiveLocation,
@@ -369,7 +392,7 @@ fun HomeScreen(
                     testTag = "quick_access_live_gps"
                 )
                 QuickActionTile(
-                    title = tr("Record", "रिकॉर्ड"),
+                    title = tr("Record", "रिकॉर्ड", "রেকর্ড"),
                     icon = Icons.Outlined.Mic,
                     color = Color(0xFFD93848),
                     onClick = onNavigateToEvidenceRecording,
@@ -377,7 +400,7 @@ fun HomeScreen(
                     testTag = "quick_access_record"
                 )
                 QuickActionTile(
-                    title = tr("Ask guide", "सहायक"),
+                    title = tr("Ask guide", "सहायक", "সহায়ক"),
                     icon = Icons.Outlined.Psychology,
                     color = GuideViolet,
                     onClick = onNavigateToAiAssistant,
@@ -398,11 +421,12 @@ fun HomeScreen(
                 icon = Icons.Outlined.AddToHomeScreen,
                 text = tr(
                     "Add 3-tap SOS shortcut to home screen",
-                    "होम स्क्रीन पर 3-टैप SOS शॉर्टकट जोड़ें"
+                    "होम स्क्रीन पर 3-टैप SOS शॉर्टकट जोड़ें",
+                    "হোম স্ক্রিনে ৩-ট্যাপ SOS শর্টকাট যোগ করুন"
                 ),
                 container = MaterialTheme.colorScheme.surface,
                 content = KavachTeal,
-                actionLabel = tr("Pin", "पिन"),
+                actionLabel = tr("Pin", "पिन", "পিন"),
                 onClick = { pinSosWidget(context) }
             )
         }
@@ -416,13 +440,17 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = tr("Quick Emergency Categories", "त्वरित आपातकालीन श्रेणियाँ"),
+                    text = tr(
+                        "Quick Emergency Categories",
+                        "त्वरित आपातकालीन श्रेणियाँ",
+                        "দ্রুত জরুরি বিভাগসমূহ"
+                    ),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = tr("Instant 1-tap support", "1-टैप तुरंत मदद"),
+                    text = tr("Instant 1-tap support", "1-टैप तुरंत मदद", "১-ট্যাপ তাৎক্ষণিক সহায়তা"),
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -438,7 +466,11 @@ fun HomeScreen(
 
         item {
             Text(
-                text = tr("More Support & Rights", "अन्य सहायता और अधिकार"),
+                text = tr(
+                    "More Support & Rights",
+                    "अन्य सहायता और अधिकार",
+                    "আরও সহায়তা ও অধিকার"
+                ),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -476,7 +508,7 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.width(14.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = tr("Incident vault", "सुरक्षित वॉल्ट"),
+                        text = tr("Incident vault", "सुरक्षित वॉल्ट", "নিরাপদ ভল্ট"),
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onBackground
@@ -484,7 +516,8 @@ fun HomeScreen(
                     Text(
                         text = tr(
                             "Encrypted notes and evidence, stored on this phone",
-                            "एन्क्रिप्टेड नोट्स और सबूत, केवल आपके फोन में सुरक्षित"
+                            "एन्क्रिप्टेड नोट्स और सबूत, केवल आपके फोन में सुरक्षित",
+                            "এনক্রিপ্টেড নোট ও প্রমাণ, শুধুমাত্র এই ফোনেই সুরক্ষিত"
                         ),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -533,6 +566,17 @@ private fun CategoryGridCard(
     modifier: Modifier = Modifier
 ) {
     val shape = RoundedCornerShape(16.dp)
+    val titleText = when (AppLanguage.current) {
+        AppLang.HINDI -> item.titleHi
+        AppLang.BENGALI -> item.titleBn
+        AppLang.ENGLISH -> item.title
+    }
+    val subtitleText = when (AppLanguage.current) {
+        AppLang.HINDI -> item.subtitleHi
+        AppLang.BENGALI -> item.subtitleBn
+        AppLang.ENGLISH -> item.subtitle
+    }
+
     Column(
         modifier = modifier
             .height(152.dp)
@@ -582,7 +626,7 @@ private fun CategoryGridCard(
 
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
-                text = if (AppLanguage.isHindi) item.titleHi else item.title,
+                text = titleText,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -591,7 +635,7 @@ private fun CategoryGridCard(
                 lineHeight = 18.sp
             )
             Text(
-                text = if (AppLanguage.isHindi) item.subtitleHi else item.subtitle,
+                text = subtitleText,
                 fontSize = 11.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 2,
@@ -713,7 +757,11 @@ private fun BetaPadhaoBannerCard(
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = tr("Beta Padhao • Beti Bachao", "बेटा पढ़ाओ • बेटी बचाओ"),
+                text = tr(
+                    "Beta Padhao • Beti Bachao",
+                    "बेटा पढ़ाओ • बेटी बचाओ",
+                    "বেটা পড়াও • বেটি বাঁচাও"
+                ),
                 color = Color.White,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold
@@ -723,7 +771,8 @@ private fun BetaPadhaoBannerCard(
         Text(
             text = tr(
                 "Educate Sons with Respect • Empower Daughters with Strength",
-                "बेटों को सम्मान सिखाएँ • बेटियों को सशक्त बनाएँ"
+                "बेटों को सम्मान सिखाएँ • बेटियों को सशक्त बनाएँ",
+                "ছেলেদের সম্মান শেখান • মেয়েদের শক্তিশালী করুন"
             ),
             color = Color.White,
             fontSize = 16.sp,
@@ -734,7 +783,8 @@ private fun BetaPadhaoBannerCard(
         Text(
             text = tr(
                 "Government Schemes, Sensitization & Pledge →",
-                "सरकारी योजनाएँ, जागरूकता और शपथ →"
+                "सरकारी योजनाएँ, जागरूकता और शपथ →",
+                "সরকারি প্রকল্প, সচেতনতা ও শপথ →"
             ),
             color = Color.White.copy(alpha = 0.9f),
             fontSize = 13.sp,
@@ -789,7 +839,8 @@ private fun pinSosWidget(context: Context) {
         context,
         tr(
             "Long-press your home screen → Widgets → Rakshakavach to add SOS",
-            "होम स्क्रीन पर देर तक दबाएँ → विजेट्स → रक्षाकवच चुनें"
+            "होम स्क्रीन पर देर तक दबाएँ → विजेट्स → रक्षाकवच चुनें",
+            "হোম স্ক্রিনে কিছুক্ষণ চেপে ধরুন → উইজেট → রক্ষাকবচ বেছে নিন"
         ),
         Toast.LENGTH_LONG
     ).show()

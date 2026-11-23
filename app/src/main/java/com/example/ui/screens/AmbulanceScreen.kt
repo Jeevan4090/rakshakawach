@@ -47,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.EmergencyAlertHelper
+import com.example.ui.AppLang
 import com.example.ui.AppLanguage
 import com.example.ui.RakshaViewModel
 import com.example.ui.components.RakshaTopAppBar
@@ -62,12 +63,12 @@ fun AmbulanceScreen(
     val currentLocation by viewModel.currentLocation.collectAsState()
 
     val emergencyTypes = listOf(
-        "Severe Injury / Accident" to "गंभीर चोट / दुर्घटना",
-        "Loss of Consciousness" to "बेहोशी",
-        "Difficulty Breathing" to "सांस लेने में तकलीफ",
-        "Severe Pain / Bleeding" to "तेज़ दर्द / रक्तस्राव",
-        "Maternal / Labor Onset" to "प्रसव / मातृत्व आपातकाल",
-        "Assault / Trauma" to "हमला / ट्रॉमा"
+        Triple("Severe Injury / Accident", "गंभीर चोट / दुर्घटना", "গুরুতর আঘাত / দুর্ঘটনা"),
+        Triple("Loss of Consciousness", "बेहोशी", "অজ্ঞান হয়ে যাওয়া"),
+        Triple("Difficulty Breathing", "सांस लेने में तकलीफ", "শ্বাসকষ্ট"),
+        Triple("Severe Pain / Bleeding", "तेज़ दर्द / रक्तस्राव", "তীব্র ব্যথা / রক্তপাত"),
+        Triple("Maternal / Labor Onset", "प्रसव / मातृत्व आपातकाल", "প্রসবকালীন / মাতৃত্বকালীন জরুরি অবস্থা"),
+        Triple("Assault / Trauma", "हमला / ट्रॉमा", "হামলা / ট্রমা")
     )
 
     var selectedIndex by remember { mutableIntStateOf(0) }
@@ -77,7 +78,11 @@ fun AmbulanceScreen(
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = tr("Medical & Ambulance", "मेडिकल और एम्बुलेंस"),
+                title = tr(
+                    "Medical & Ambulance",
+                    "मेडिकल और एम्बुलेंस",
+                    "মেডিকেল ও অ্যাম্বুলেন্স"
+                ),
                 onBackClick = onNavigateBack
             )
         }
@@ -109,7 +114,11 @@ fun AmbulanceScreen(
                         Icon(Icons.Default.Call, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = tr("DIAL 112\n(UNIFIED)", "112 डायल करें\n(आपातकाल)"),
+                            text = tr(
+                                "DIAL 112\n(UNIFIED)",
+                                "112 डायल करें\n(आपातकाल)",
+                                "112 ডায়াল করুন\n(জরুরি)"
+                            ),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Black
                         )
@@ -127,7 +136,11 @@ fun AmbulanceScreen(
                         Icon(Icons.Default.MedicalServices, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = tr("DIAL 108\n(AMBULANCE)", "108 डायल करें\n(एम्बुलेंस)"),
+                            text = tr(
+                                "DIAL 108\n(AMBULANCE)",
+                                "108 डायल करें\n(एम्बुलेंस)",
+                                "108 ডায়াল করুন\n(অ্যাম্বুলেন্স)"
+                            ),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Black
                         )
@@ -147,7 +160,8 @@ fun AmbulanceScreen(
                     Text(
                         text = tr(
                             "Dial 102 (Maternal & Infant Ambulance Transport)",
-                            "102 डायल करें (मातृ एवं शिशु एम्बुलेंस सेवा)"
+                            "102 डायल करें (मातृ एवं शिशु एम्बुलेंस सेवा)",
+                            "102 ডায়াল করুন (মাতৃ ও শিশু অ্যাম্বুলেন্স পরিষেবা)"
                         ),
                         fontWeight = FontWeight.SemiBold
                     )
@@ -175,7 +189,8 @@ fun AmbulanceScreen(
                         Text(
                             text = tr(
                                 "Important: Tapping the call buttons dials the verified government ambulance helpline. An ambulance is only dispatched once you connect with the official dispatcher and confirm your condition and location.",
-                                "महत्वपूर्ण: कॉल बटन दबाने पर सत्यापित सरकारी एम्बुलेंस हेल्पलाइन डायल होती है। एम्बुलेंस तभी भेजी जाती है जब आप ऑपरेटर से जुड़कर अपनी स्थिति और लोकेशन की पुष्टि करते हैं।"
+                                "महत्वपूर्ण: कॉल बटन दबाने पर सत्यापित सरकारी एम्बुलेंस हेल्पलाइन डायल होती है। एम्बुलेंस तभी भेजी जाती है जब आप ऑपरेटर से जुड़कर अपनी स्थिति और लोकेशन की पुष्टि करते हैं।",
+                                "গুরুত্বপূর্ণ: কল বাটনে ট্যাপ করলে যাচাইকৃত সরকারি অ্যাম্বুলেন্স হেল্পলাইনে কল যায়। অপারেটরের সাথে যুক্ত হয়ে আপনার অবস্থা ও অবস্থান নিশ্চিত করার পরেই অ্যাম্বুলেন্স পাঠানো হয়।"
                             ),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -204,7 +219,8 @@ fun AmbulanceScreen(
                             Text(
                                 text = tr(
                                     "Locate Nearest Hospitals & Trauma Centers",
-                                    "नज़दीकी अस्पताल और ट्रॉमा सेंटर खोजें"
+                                    "नज़दीकी अस्पताल और ट्रॉमा सेंटर खोजें",
+                                    "নিকটতম হাসপাতাল ও ট্রমা সেন্টার খুঁজুন"
                                 ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 15.sp
@@ -214,7 +230,8 @@ fun AmbulanceScreen(
                         Text(
                             text = tr(
                                 "Open Google Maps navigation to verified hospitals and emergency rooms nearest to your location.",
-                                "अपनी लोकेशन के पास सत्यापित अस्पतालों और इमरजेंसी कक्षों के लिए Google Maps खोलें।"
+                                "अपनी लोकेशन के पास सत्यापित अस्पतालों और इमरजेंसी कक्षों के लिए Google Maps खोलें।",
+                                "আপনার অবস্থানের কাছাকাছি যাচাইকৃত হাসপাতাল ও জরুরি বিভাগের জন্য Google Maps খুলুন।"
                             ),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -232,7 +249,11 @@ fun AmbulanceScreen(
                             Icon(Icons.Default.LocalHospital, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                tr("Open Nearby Hospitals on Google Maps", "Google Maps पर नज़दीकी अस्पताल देखें")
+                                tr(
+                                    "Open Nearby Hospitals on Google Maps",
+                                    "Google Maps पर नज़दीकी अस्पताल देखें",
+                                    "Google Maps-এ নিকটতম হাসপাতাল দেখুন"
+                                )
                             )
                         }
                     }
@@ -248,7 +269,11 @@ fun AmbulanceScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = tr("Medical Emergency Details Form", "मेडिकल इमरजेंसी विवरण फॉर्म"),
+                            text = tr(
+                                "Medical Emergency Details Form",
+                                "मेडिकल इमरजेंसी विवरण फॉर्म",
+                                "মেডিকেল জরুরি বিবরণ ফর্ম"
+                            ),
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
                         )
@@ -256,7 +281,8 @@ fun AmbulanceScreen(
                         Text(
                             text = tr(
                                 "Specify symptoms to quickly broadcast to your emergency contacts alongside your GPS pin:",
-                                "अपने आपातकालीन संपर्कों को GPS लोकेशन के साथ तुरंत भेजने के लिए लक्षण चुनें:"
+                                "अपने आपातकालीन संपर्कों को GPS लोकेशन के साथ तुरंत भेजने के लिए लक्षण चुनें:",
+                                "আপনার GPS অবস্থানের সাথে জরুরি যোগাযোগগুলোতে দ্রুত পাঠাতে লক্ষণ নির্বাচন করুন:"
                             ),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -272,11 +298,16 @@ fun AmbulanceScreen(
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
                                     rowIndices.forEach { idx ->
-                                        val (en, hi) = emergencyTypes[idx]
+                                        val (en, hi, bn) = emergencyTypes[idx]
+                                        val labelText = when (AppLanguage.current) {
+                                            AppLang.HINDI -> hi
+                                            AppLang.BENGALI -> bn
+                                            AppLang.ENGLISH -> en
+                                        }
                                         FilterChip(
                                             selected = selectedIndex == idx,
                                             onClick = { selectedIndex = idx },
-                                            label = { Text(if (AppLanguage.isHindi) hi else en, fontSize = 11.sp) },
+                                            label = { Text(labelText, fontSize = 11.sp) },
                                             modifier = Modifier.weight(1f)
                                         )
                                     }
@@ -296,7 +327,8 @@ fun AmbulanceScreen(
                                 Text(
                                     tr(
                                         "Any Allergies, Blood Group, or Specific Landmark",
-                                        "एलर्जी, ब्लड ग्रुप या नज़दीकी पहचान चिह्न"
+                                        "एलर्जी, ब्लड ग्रुप या नज़दीकी पहचान चिह्न",
+                                        "অ্যালার্জি, রক্তের গ্রুপ বা নিকটবর্তী ল্যান্ডমার্ক"
                                     )
                                 )
                             },
@@ -304,7 +336,8 @@ fun AmbulanceScreen(
                                 Text(
                                     tr(
                                         "e.g. Diabetic, Apartment 3B, Severe bleeding",
-                                        "जैसे: शुगर, अपार्टमेंट 3B, अधिक रक्तस्राव"
+                                        "जैसे: शुगर, अपार्टमेंट 3B, अधिक रक्तस्राव",
+                                        "যেমন: ডায়াবেটিস, ফ্ল্যাট 3B, অতিরিক্ত রক্তপাত"
                                     )
                                 )
                             },
@@ -333,7 +366,8 @@ fun AmbulanceScreen(
                                 viewModel.triggerSosAlertImmediate(text)
                                 alertSentFeedback = tr(
                                     "Medical alert shared with contacts.",
-                                    "मेडिकल अलर्ट संपर्कों के साथ साझा किया गया।"
+                                    "मेडिकल अलर्ट संपर्कों के साथ साझा किया गया।",
+                                    "মেডিকেল অ্যালার্ট যোগাযোগগুলোর সাথে শেয়ার করা হয়েছে।"
                                 )
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0F172A)),
@@ -347,7 +381,8 @@ fun AmbulanceScreen(
                             Text(
                                 tr(
                                     "Share Medical Details & GPS with Contacts",
-                                    "मेडिकल विवरण और GPS संपर्कों को भेजें"
+                                    "मेडिकल विवरण और GPS संपर्कों को भेजें",
+                                    "মেডিকেল বিবরণ ও GPS যোগাযোগগুলোতে পাঠান"
                                 )
                             )
                         }

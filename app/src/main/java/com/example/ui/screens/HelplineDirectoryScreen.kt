@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.EmergencyAlertHelper
 import com.example.data.entity.HelplineItem
+import com.example.ui.AppLang
 import com.example.ui.AppLanguage
 import com.example.ui.RakshaViewModel
 import com.example.ui.components.RakshaTopAppBar
@@ -62,19 +63,23 @@ fun HelplineDirectoryScreen(
     val selectedCategory by viewModel.selectedHelplineCategory.collectAsState()
 
     val categories = listOf(
-        "All" to "सभी",
-        "Emergency" to "आपातकाल",
-        "Women Safety" to "महिला सुरक्षा",
-        "Medical" to "चिकित्सा",
-        "Cybercrime" to "साइबर क्राइम",
-        "Child Protection" to "बाल सुरक्षा",
-        "Regional (WB/Kolkata)" to "क्षेत्रीय (WB/कोलकाता)"
+        Triple("All", "सभी", "সব"),
+        Triple("Emergency", "आपातकाल", "জরুরি"),
+        Triple("Women Safety", "महिला सुरक्षा", "নারী সুরক্ষা"),
+        Triple("Medical", "चिकित्सा", "চিকিৎসা"),
+        Triple("Cybercrime", "साइबर क्राइम", "সাইবার ক্রাইম"),
+        Triple("Child Protection", "बाल सुरक्षा", "শিশু সুরক্ষা"),
+        Triple("Regional (WB/Kolkata)", "क्षेत्रीय (WB/कोलकाता)", "আঞ্চলিক (পশ্চিমবঙ্গ/কলকাতা)")
     )
 
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = tr("Verified Helpline Directory", "सत्यापित हेल्पलाइन निर्देशिका"),
+                title = tr(
+                    "Verified Helpline Directory",
+                    "सत्यापित हेल्पलाइन निर्देशिका",
+                    "যাচাইকৃত হেল্পলাইন ডিরেক্টরি"
+                ),
                 onBackClick = onNavigateBack
             )
         }
@@ -97,7 +102,8 @@ fun HelplineDirectoryScreen(
                         Text(
                             tr(
                                 "Search helpline name, number, or keyword...",
-                                "हेल्पलाइन नाम, नंबर या कीवर्ड खोजें..."
+                                "हेल्पलाइन नाम, नंबर या कीवर्ड खोजें...",
+                                "হেল্পলাইনের নাম, নম্বর বা কীওয়ার্ড খুঁজুন..."
                             )
                         )
                     },
@@ -116,11 +122,16 @@ fun HelplineDirectoryScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(vertical = 4.dp)
                 ) {
-                    items(categories) { (en, hi) ->
+                    items(categories) { (en, hi, bn) ->
+                        val labelText = when (AppLanguage.current) {
+                            AppLang.HINDI -> hi
+                            AppLang.BENGALI -> bn
+                            AppLang.ENGLISH -> en
+                        }
                         FilterChip(
                             selected = selectedCategory == en,
                             onClick = { viewModel.setHelplineCategory(en) },
-                            label = { Text(if (AppLanguage.isHindi) hi else en, fontSize = 12.sp) },
+                            label = { Text(labelText, fontSize = 12.sp) },
                             modifier = Modifier.testTag("filter_chip_$en")
                         )
                     }
@@ -148,7 +159,8 @@ fun HelplineDirectoryScreen(
                         Text(
                             text = tr(
                                 "All helplines are verified against official government directories. In case a regional line is congested, 112 functions as the single national fallback.",
-                                "सभी हेल्पलाइन आधिकारिक सरकारी निर्देशिकाओं से सत्यापित हैं। यदि कोई क्षेत्रीय लाइन व्यस्त हो, तो 112 राष्ट्रीय आपातकालीन नंबर के रूप में काम करता है।"
+                                "सभी हेल्पलाइन आधिकारिक सरकारी निर्देशिकाओं से सत्यापित हैं। यदि कोई क्षेत्रीय लाइन व्यस्त हो, तो 112 राष्ट्रीय आपातकालीन नंबर के रूप में काम करता है।",
+                                "সমস্ত হেল্পলাইন সরকারি ডিরেক্টরি থেকে যাচাইকৃত। কোনো আঞ্চলিক লাইন ব্যস্ত থাকলে 112 জাতীয় জরুরি নম্বর হিসেবে কাজ করে।"
                             ),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -248,7 +260,8 @@ fun HelplineCard(
                 Text(
                     text = tr(
                         "Availability: ${helpline.availability}",
-                        "उपलब्धता: ${helpline.availability}"
+                        "उपलब्धता: ${helpline.availability}",
+                        "উপলব্ধতা: ${helpline.availability}"
                     ),
                     fontSize = 11.sp,
                     color = SafeGreen,
@@ -284,7 +297,8 @@ fun HelplineCard(
                     Text(
                         text = tr(
                             "TAP TO CALL ${helpline.number}",
-                            "${helpline.number} पर कॉल करें"
+                            "${helpline.number} पर कॉल करें",
+                            "${helpline.number}-এ কল করুন"
                         ),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold
@@ -299,7 +313,8 @@ fun HelplineCard(
                         Text(
                             text = tr(
                                 "Alt (${helpline.alternativeNumber})",
-                                "अन्य (${helpline.alternativeNumber})"
+                                "अन्य (${helpline.alternativeNumber})",
+                                "বিকল্প (${helpline.alternativeNumber})"
                             ),
                             fontSize = 11.sp
                         )

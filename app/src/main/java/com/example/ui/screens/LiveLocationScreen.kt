@@ -66,6 +66,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.EmergencyAlertHelper
+import com.example.ui.AppLang
 import com.example.ui.AppLanguage
 import com.example.ui.RakshaViewModel
 import com.example.ui.theme.GuideViolet
@@ -77,11 +78,14 @@ import java.util.Locale
 private data class SafeHub(
     val name: String,
     val nameHi: String,
+    val nameBn: String,
     val category: String,
     val categoryHi: String,
+    val categoryBn: String,
     val filterKey: String,
     val address: String,
     val addressHi: String,
+    val addressBn: String,
     val phone: String,
     val query: String,
     val icon: ImageVector
@@ -89,38 +93,38 @@ private data class SafeHub(
 
 private val safeHubs = listOf(
     SafeHub(
-        "Nearest Police Station", "नज़दीकी पुलिस स्टेशन",
-        "Police", "पुलिस",
+        "Nearest Police Station", "नज़दीकी पुलिस स्टेशन", "নিকটতম থানা",
+        "Police", "पुलिस", "পুলিশ",
         "Police",
-        "24x7 Emergency Police Desk", "24x7 आपातकालीन पुलिस डेस्क",
+        "24x7 Emergency Police Desk", "24x7 आपातकालीन पुलिस डेस्क", "২৪x৭ জরুরি পুলিশ ডেস্ক",
         "112", "police station", Icons.Outlined.LocalPolice
     ),
     SafeHub(
-        "Nearest Women Help Desk", "नज़दीकी महिला हेल्प डेस्क",
-        "Women Cells", "महिला प्रकोष्ठ",
+        "Nearest Women Help Desk", "नज़दीकी महिला हेल्प डेस्क", "নিকটতম মহিলা হেল্প ডেস্ক",
+        "Women Cells", "महिला प्रकोष्ठ", "মহিলা সেল",
         "Women Cells",
-        "All-Women Police & Sakhi Cell", "महिला पुलिस और सखी सेल",
+        "All-Women Police & Sakhi Cell", "महिला पुलिस और सखी सेल", "মহিলা পুলিশ ও সখী সেল",
         "181", "women police station", Icons.Outlined.VerifiedUser
     ),
     SafeHub(
-        "Nearest Metro Station", "नज़दीकी मेट्रो स्टेशन",
-        "Metro / Transit", "मेट्रो / परिवहन",
+        "Nearest Metro Station", "नज़दीकी मेट्रो स्टेशन", "নিকটতম মেট্রো স্টেশন",
+        "Metro / Transit", "मेट्रो / परिवहन", "মেট্রো / পরিবহন",
         "Metro",
-        "CCTV Monitored Public Transit & Security", "CCTV निगरानी वाला सार्वजनिक परिवहन और सुरक्षा",
+        "CCTV Monitored Public Transit & Security", "CCTV निगरानी वाला सार्वजनिक परिवहन और सुरक्षा", "CCTV নজরদারিযুক্ত গণপরিবহন ও নিরাপত্তা",
         "112", "metro station", Icons.Outlined.DirectionsSubway
     ),
     SafeHub(
-        "Nearest Emergency Hospital", "नज़दीकी इमरजेंसी अस्पताल",
-        "Hospital / ER", "अस्पताल / इमरजेंसी",
+        "Nearest Emergency Hospital", "नज़दीकी इमरजेंसी अस्पताल", "নিকটতম জরুরি হাসপাতাল",
+        "Hospital / ER", "अस्पताल / इमरजेंसी", "হাসপাতাল / জরুরি বিভাগ",
         "Hospital",
-        "24x7 Trauma & Emergency Care", "24x7 ट्रॉमा और इमरजेंसी सेवा",
+        "24x7 Trauma & Emergency Care", "24x7 ट्रॉमा और इमरजेंसी सेवा", "২৪x৭ ট্রমা ও জরুরি চিকিৎসা পরিষেবা",
         "108", "hospital emergency", Icons.Outlined.LocalHospital
     ),
     SafeHub(
-        "Nearest 24/7 Pharmacy", "नज़दीकी 24/7 मेडिकल स्टोर",
-        "Pharmacy", "मेडिकल स्टोर",
+        "Nearest 24/7 Pharmacy", "नज़दीकी 24/7 मेडिकल स्टोर", "নিকটতম ২৪/৭ ফার্মেসি",
+        "Pharmacy", "मेडिकल स्टोर", "ফার্মেসি",
         "Hospital",
-        "Round-the-clock Medical Store", "24 घंटे खुला मेडिकल स्टोर",
+        "Round-the-clock Medical Store", "24 घंटे खुला मेडिकल स्टोर", "২৪ ঘণ্টা খোলা ওষুধের দোকান",
         "108", "24 hour pharmacy", Icons.Outlined.LocalPharmacy
     )
 )
@@ -195,17 +199,37 @@ fun LiveLocationScreen(
             ) {
                 Column {
                     Text(
-                        text = tr("Safety Map & Safe Zones", "सुरक्षा मैप और सुरक्षित क्षेत्र"),
+                        text = tr(
+                            "Safety Map & Safe Zones",
+                            "सुरक्षा मैप और सुरक्षित क्षेत्र",
+                            "নিরাপত্তা ম্যাপ ও নিরাপদ স্থান"
+                        ),
                         fontSize = 21.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
                         text = when {
-                            isLiveTracking -> tr("Live GPS Tracking Active", "लाइव GPS ट्रैकिंग सक्रिय")
-                            location != null -> tr("Live GPS Ready", "लाइव GPS तैयार")
-                            !hasPermission -> tr("Location Permission Needed", "लोकेशन अनुमति आवश्यक है")
-                            else -> tr("Fetching GPS signal...", "GPS सिग्नल खोजा जा रहा है...")
+                            isLiveTracking -> tr(
+                                "Live GPS Tracking Active",
+                                "लाइव GPS ट्रैकिंग सक्रिय",
+                                "লাইভ GPS ট্র্যাকিং সক্রিয়"
+                            )
+                            location != null -> tr(
+                                "Live GPS Ready",
+                                "लाइव GPS तैयार",
+                                "লাইভ GPS প্রস্তুত"
+                            )
+                            !hasPermission -> tr(
+                                "Location Permission Needed",
+                                "लोकेशन अनुमति आवश्यक है",
+                                "লোকেশন অনুমতি প্রয়োজন"
+                            )
+                            else -> tr(
+                                "Fetching GPS signal...",
+                                "GPS सिग्नल खोजा जा रहा है...",
+                                "GPS সিগন্যাল খোঁজা হচ্ছে..."
+                            )
                         },
                         fontSize = 12.sp,
                         color = GuideViolet
@@ -215,7 +239,7 @@ fun LiveLocationScreen(
                     IconButton(onClick = { viewModel.refreshLocation() }) {
                         Icon(
                             Icons.Outlined.Refresh,
-                            contentDescription = tr("Refresh", "रिफ्रेश"),
+                            contentDescription = tr("Refresh", "रिफ्रेश", "রিফ্রেশ"),
                             tint = GuideViolet
                         )
                     }
@@ -225,7 +249,7 @@ fun LiveLocationScreen(
                     ) {
                         Icon(
                             Icons.Outlined.Share,
-                            contentDescription = tr("Share", "साझा करें"),
+                            contentDescription = tr("Share", "साझा करें", "শেয়ার করুন"),
                             tint = GuideViolet
                         )
                     }
@@ -258,10 +282,10 @@ fun LiveLocationScreen(
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = when {
-                                    isLiveTracking -> tr("Live GPS Active", "लाइव GPS सक्रिय")
-                                    location != null -> tr("GPS Locked", "GPS लॉक है")
-                                    !hasPermission -> tr("Location Off", "लोकेशन बंद है")
-                                    else -> tr("Searching GPS...", "GPS खोजा जा रहा है...")
+                                    isLiveTracking -> tr("Live GPS Active", "लाइव GPS सक्रिय", "লাইভ GPS সক্রিয়")
+                                    location != null -> tr("GPS Locked", "GPS लॉक है", "GPS লক হয়েছে")
+                                    !hasPermission -> tr("Location Off", "लोकेशन बंद है", "লোকেশন বন্ধ")
+                                    else -> tr("Searching GPS...", "GPS खोजा जा रहा है...", "GPS খোঁজা হচ্ছে...")
                                 },
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -277,7 +301,11 @@ fun LiveLocationScreen(
 
                     if (location != null) {
                         Text(
-                            text = tr("Current GPS Coordinates", "वर्तमान GPS निर्देशांक"),
+                            text = tr(
+                                "Current GPS Coordinates",
+                                "वर्तमान GPS निर्देशांक",
+                                "বর্তমান GPS স্থানাঙ্ক"
+                            ),
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -309,7 +337,7 @@ fun LiveLocationScreen(
                             ) {
                                 Icon(Icons.Outlined.Navigation, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text(tr("Open in Maps", "Maps में खोलें"), fontSize = 12.sp)
+                                Text(tr("Open in Maps", "Maps में खोलें", "Maps-এ খুলুন"), fontSize = 12.sp)
                             }
 
                             Button(
@@ -322,14 +350,15 @@ fun LiveLocationScreen(
                             ) {
                                 Icon(Icons.Outlined.Share, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text(tr("Share GPS", "GPS साझा करें"), fontSize = 12.sp)
+                                Text(tr("Share GPS", "GPS साझा करें", "GPS শেয়ার করুন"), fontSize = 12.sp)
                             }
                         }
                     } else if (!hasPermission) {
                         Text(
                             text = tr(
                                 "Allow location access so Rakshakavach can find nearby safe zones and share your live map link.",
-                                "लोकेशन की अनुमति दें ताकि रक्षाकवच नज़दीकी सुरक्षित स्थान खोज सके और आपका लाइव मैप लिंक साझा कर सके।"
+                                "लोकेशन की अनुमति दें ताकि रक्षाकवच नज़दीकी सुरक्षित स्थान खोज सके और आपका लाइव मैप लिंक साझा कर सके।",
+                                "লোকেশন অ্যাক্সেসের অনুমতি দিন যাতে রক্ষাকবচ কাছাকাছি নিরাপদ স্থান খুঁজে পেতে এবং আপনার লাইভ ম্যাপ লিংক শেয়ার করতে পারে।"
                             ),
                             fontSize = 13.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -340,13 +369,20 @@ fun LiveLocationScreen(
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(tr("Allow precise location", "सटीक लोकेशन की अनुमति दें"))
+                            Text(
+                                tr(
+                                    "Allow precise location",
+                                    "सटीक लोकेशन की अनुमति दें",
+                                    "সঠিক লোকেশনের অনুমতি দিন"
+                                )
+                            )
                         }
                     } else {
                         Text(
                             text = tr(
                                 "Waiting for GPS fix. Make sure location is switched on in your phone's settings.",
-                                "GPS सिग्नल की प्रतीक्षा है। कृपया सुनिश्चित करें कि आपके फोन की सेटिंग्स में लोकेशन चालू है।"
+                                "GPS सिग्नल की प्रतीक्षा है। कृपया सुनिश्चित करें कि आपके फोन की सेटिंग्स में लोकेशन चालू है।",
+                                "GPS সিগন্যালের জন্য অপেক্ষা করা হচ্ছে। আপনার ফোনের সেটিংসে লোকেশন চালু আছে কিনা নিশ্চিত করুন।"
                             ),
                             fontSize = 13.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -372,7 +408,8 @@ fun LiveLocationScreen(
                         Text(
                             text = tr(
                                 "Live Map Quick Search (Direct Navigation)",
-                                "लाइव मैप त्वरित खोज (सीधा नेविगेशन)"
+                                "लाइव मैप त्वरित खोज (सीधा नेविगेशन)",
+                                "লাইভ ম্যাপ দ্রুত অনুসন্ধান (সরাসরি নেভিগেশন)"
                             ),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
@@ -382,7 +419,7 @@ fun LiveLocationScreen(
 
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         QuickSearchButton(
-                            label = tr("Police Station", "पुलिस स्टेशन"),
+                            label = tr("Police Station", "पुलिस स्टेशन", "থানা"),
                             icon = Icons.Outlined.LocalPolice,
                             tint = Color(0xFFD93848),
                             onClick = { EmergencyAlertHelper.openMapSearch(context, "police station", currentLocation) },
@@ -391,7 +428,7 @@ fun LiveLocationScreen(
                                 .testTag("map_search_police_btn")
                         )
                         QuickSearchButton(
-                            label = tr("Hospital / ER", "अस्पताल / ER"),
+                            label = tr("Hospital / ER", "अस्पताल / ER", "হাসপাতাল / ER"),
                             icon = Icons.Outlined.LocalHospital,
                             tint = Color(0xFF0E8A72),
                             onClick = { EmergencyAlertHelper.openMapSearch(context, "hospital emergency", currentLocation) },
@@ -402,14 +439,14 @@ fun LiveLocationScreen(
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         QuickSearchButton(
-                            label = tr("24/7 Pharmacy", "24/7 मेडिकल"),
+                            label = tr("24/7 Pharmacy", "24/7 मेडिकल", "২৪/৭ ফার্মেসি"),
                             icon = Icons.Outlined.LocalPharmacy,
                             tint = Color(0xFF0284C7),
                             onClick = { EmergencyAlertHelper.openMapSearch(context, "24 hour pharmacy", currentLocation) },
                             modifier = Modifier.weight(1f)
                         )
                         QuickSearchButton(
-                            label = tr("Women Desk", "महिला डेस्क"),
+                            label = tr("Women Desk", "महिला डेस्क", "মহিলা ডেস্ক"),
                             icon = Icons.Outlined.VerifiedUser,
                             tint = GuideViolet,
                             onClick = { EmergencyAlertHelper.openMapSearch(context, "women police station", currentLocation) },
@@ -417,7 +454,7 @@ fun LiveLocationScreen(
                         )
                     }
                     QuickSearchButton(
-                        label = tr("Metro Station", "मेट्रो स्टेशन"),
+                        label = tr("Metro Station", "मेट्रो स्टेशन", "মেট্রো স্টেশন"),
                         icon = Icons.Outlined.DirectionsSubway,
                         tint = Color(0xFFD97706),
                         onClick = { EmergencyAlertHelper.openMapSearch(context, "metro station", currentLocation) },
@@ -432,11 +469,15 @@ fun LiveLocationScreen(
         // Filter Chips
         item {
             val filters = listOf(
-                "All" to tr("All Safe Hubs (${safeHubs.size})", "सभी सुरक्षित स्थान (${safeHubs.size})"),
-                "Police" to tr("Police", "पुलिस"),
-                "Women Cells" to tr("Women Cells", "महिला प्रकोष्ठ"),
-                "Metro" to tr("Metro", "मेट्रो"),
-                "Hospital" to tr("Medical", "चिकित्सा")
+                "All" to tr(
+                    "All Safe Hubs (${safeHubs.size})",
+                    "सभी सुरक्षित स्थान (${safeHubs.size})",
+                    "সব নিরাপদ স্থান (${safeHubs.size})"
+                ),
+                "Police" to tr("Police", "पुलिस", "পুলিশ"),
+                "Women Cells" to tr("Women Cells", "महिला प्रकोष्ठ", "মহিলা সেল"),
+                "Metro" to tr("Metro", "मेट्रो", "মেট্রো"),
+                "Hospital" to tr("Medical", "चिकित्सा", "চিকিৎসা")
             )
             LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(filters) { (key, label) ->
@@ -461,13 +502,17 @@ fun LiveLocationScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = tr("Verified Nearby Safe Locations", "नज़दीकी सत्यापित सुरक्षित स्थान"),
+                    text = tr(
+                        "Verified Nearby Safe Locations",
+                        "नज़दीकी सत्यापित सुरक्षित स्थान",
+                        "কাছাকাছি যাচাইকৃত নিরাপদ স্থান"
+                    ),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = tr("Closest first", "सबसे नज़दीक पहले"),
+                    text = tr("Closest first", "सबसे नज़दीक पहले", "সবচেয়ে কাছের আগে"),
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -476,6 +521,22 @@ fun LiveLocationScreen(
 
         // Safe Hub Cards
         items(filteredHubs) { hub ->
+            val hubName = when (AppLanguage.current) {
+                AppLang.HINDI -> hub.nameHi
+                AppLang.BENGALI -> hub.nameBn
+                AppLang.ENGLISH -> hub.name
+            }
+            val hubCategory = when (AppLanguage.current) {
+                AppLang.HINDI -> hub.categoryHi
+                AppLang.BENGALI -> hub.categoryBn
+                AppLang.ENGLISH -> hub.category
+            }
+            val hubAddress = when (AppLanguage.current) {
+                AppLang.HINDI -> hub.addressHi
+                AppLang.BENGALI -> hub.addressBn
+                AppLang.ENGLISH -> hub.address
+            }
+
             Card(
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -497,13 +558,13 @@ fun LiveLocationScreen(
                         Spacer(modifier = Modifier.width(12.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = if (AppLanguage.isHindi) hub.nameHi else hub.name,
+                                text = hubName,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 15.sp,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = if (AppLanguage.isHindi) hub.categoryHi else hub.category,
+                                text = hubCategory,
                                 fontSize = 12.sp,
                                 color = GuideViolet
                             )
@@ -511,7 +572,7 @@ fun LiveLocationScreen(
                     }
 
                     Text(
-                        text = if (AppLanguage.isHindi) hub.addressHi else hub.address,
+                        text = hubAddress,
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -525,7 +586,7 @@ fun LiveLocationScreen(
                         ) {
                             Icon(Icons.Outlined.Directions, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text(tr("Directions", "दिशा-निर्देश"), fontSize = 12.sp)
+                            Text(tr("Directions", "दिशा-निर्देश", "দিকনির্দেশনা"), fontSize = 12.sp)
                         }
                         OutlinedButton(
                             onClick = { EmergencyAlertHelper.dialNumber(context, hub.phone) },
@@ -536,7 +597,7 @@ fun LiveLocationScreen(
                             Icon(Icons.Outlined.Call, contentDescription = null, tint = GuideViolet, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = tr("Call ${hub.phone}", "${hub.phone} पर कॉल"),
+                                text = tr("Call ${hub.phone}", "${hub.phone} पर कॉल", "${hub.phone}-এ কল"),
                                 fontSize = 12.sp,
                                 color = GuideViolet
                             )

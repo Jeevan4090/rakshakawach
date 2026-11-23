@@ -60,6 +60,7 @@ import com.example.ui.screens.UrgentHelpScreen
 import com.example.ui.screens.WorkplaceHarassmentScreen
 import com.example.ui.theme.GuideViolet
 import com.example.ui.theme.RakshaKavachTheme
+import com.example.ui.tr
 
 enum class Screen {
     HOME,
@@ -84,16 +85,17 @@ private data class BottomNavItem(
     val screen: Screen,
     val label: String,
     val labelHi: String,
+    val labelBn: String,
     val icon: ImageVector,
     val selectedIcon: ImageVector
 )
 
 private val bottomNavItems = listOf(
-    BottomNavItem(Screen.HOME, "Home", "होम", Icons.Outlined.Home, Icons.Filled.Home),
-    BottomNavItem(Screen.LIVE_LOCATION, "Map", "मैप", Icons.Outlined.Map, Icons.Filled.Map),
-    BottomNavItem(Screen.CONTACTS, "Contacts", "संपर्क", Icons.Outlined.People, Icons.Filled.People),
-    BottomNavItem(Screen.AI_ASSISTANT, "Rakshak", "रक्षक", Icons.Outlined.AutoAwesome, Icons.Filled.AutoAwesome),
-    BottomNavItem(Screen.REPORTS, "Vault", "वॉल्ट", Icons.Outlined.Shield, Icons.Filled.Shield)
+    BottomNavItem(Screen.HOME, "Home", "होम", "হোম", Icons.Outlined.Home, Icons.Filled.Home),
+    BottomNavItem(Screen.LIVE_LOCATION, "Map", "मैप", "ম্যাপ", Icons.Outlined.Map, Icons.Filled.Map),
+    BottomNavItem(Screen.CONTACTS, "Contacts", "संपर्क", "যোগাযোগ", Icons.Outlined.People, Icons.Filled.People),
+    BottomNavItem(Screen.AI_ASSISTANT, "Rakshak", "रक्षक", "রক্ষক", Icons.Outlined.AutoAwesome, Icons.Filled.AutoAwesome),
+    BottomNavItem(Screen.REPORTS, "Vault", "वॉल्ट", "ভল্ট", Icons.Outlined.Shield, Icons.Filled.Shield)
 )
 
 class MainActivity : ComponentActivity() {
@@ -157,7 +159,6 @@ fun RakshaKavachApp(
         }
     }
 
-    // Fired automatically when the home screen widget is tapped 3 times
     LaunchedEffect(sosTriggerCount) {
         if (sosTriggerCount > 0) {
             viewModel.triggerSosAlertImmediate()
@@ -183,7 +184,7 @@ fun RakshaKavachApp(
                 ) {
                     bottomNavItems.forEach { item ->
                         val selected = currentScreen == item.screen
-                        val displayLabel = if (AppLanguage.isHindi) item.labelHi else item.label
+                        val displayLabel = tr(item.label, item.labelHi, item.labelBn)
                         NavigationBarItem(
                             selected = selected,
                             onClick = { switchTab(item.screen) },

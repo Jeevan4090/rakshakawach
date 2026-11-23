@@ -121,7 +121,11 @@ fun EvidenceRecordingScreen(
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = tr("Evidence Recording (Audio/Video)", "सबूत रिकॉर्डिंग (ऑडियो/वीडियो)"),
+                title = tr(
+                    "Evidence Recording (Audio/Video)",
+                    "सबूत रिकॉर्डिंग (ऑडियो/वीडियो)",
+                    "প্রমাণ রেকর্ডিং (অডিও/ভিডিও)"
+                ),
                 onBackClick = onNavigateBack
             )
         }
@@ -156,7 +160,8 @@ fun EvidenceRecordingScreen(
                         Text(
                             text = tr(
                                 "Legal Compliance: Evidence recordings are activated only upon your explicit tap. No secret recording occurs. Files are stored securely on this device's private sandbox and are never uploaded to police or servers without your direction.",
-                                "कानूनी पारदर्शिता: सबूत रिकॉर्डिंग केवल आपके स्पष्ट टैप करने पर ही शुरू होती है। कोई गुप्त रिकॉर्डिंग नहीं होती। फ़ाइलें आपके फोन के सुरक्षित स्टोरेज में रहती हैं और आपकी अनुमति के बिना कहीं अपलोड नहीं की जातीं।"
+                                "कानूनी पारदर्शिता: सबूत रिकॉर्डिंग केवल आपके स्पष्ट टैप करने पर ही शुरू होती है। कोई गुप्त रिकॉर्डिंग नहीं होती। फ़ाइलें आपके फोन के सुरक्षित स्टोरेज में रहती हैं और आपकी अनुमति के बिना कहीं अपलोड नहीं की जातीं।",
+                                "আইনি স্বচ্ছতা: প্রমাণ রেকর্ডিং শুধুমাত্র আপনার স্পষ্ট ট্যাপেই শুরু হয়। কোনো গোপন রেকর্ডিং হয় না। ফাইলগুলো আপনার ফোনের নিরাপদ স্টোরেজে সংরক্ষিত থাকে এবং আপনার অনুমতি ছাড়া পুলিশ বা কোনো সার্ভারে আপলোড করা হয় না।"
                             ),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -179,7 +184,7 @@ fun EvidenceRecordingScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(Icons.Default.Mic, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text(tr("Audio SOS Evidence", "ऑडियो सबूत"))
+                                Text(tr("Audio SOS Evidence", "ऑडियो सबूत", "অডিও প্রমাণ"))
                             }
                         },
                         modifier = Modifier.testTag("tab_audio_sos")
@@ -191,7 +196,7 @@ fun EvidenceRecordingScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(Icons.Default.Videocam, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text(tr("Video SOS Documentation", "वीडियो सबूत"))
+                                Text(tr("Video SOS Documentation", "वीडियो सबूत", "ভিডিও প্রমাণ"))
                             }
                         },
                         modifier = Modifier.testTag("tab_video_sos")
@@ -216,9 +221,13 @@ fun EvidenceRecordingScreen(
                         ) {
                             Text(
                                 text = if (audioState.isRecording) {
-                                    tr("RECORDING AUDIO EVIDENCE", "ऑडियो सबूत रिकॉर्ड हो रहा है")
+                                    tr(
+                                        "RECORDING AUDIO EVIDENCE",
+                                        "ऑडियो सबूत रिकॉर्ड हो रहा है",
+                                        "অডিও প্রমাণ রেকর্ড হচ্ছে"
+                                    )
                                 } else {
-                                    tr("Audio SOS Recorder", "ऑडियो SOS रिकॉर्डर")
+                                    tr("Audio SOS Recorder", "ऑडियो SOS रिकॉर्डर", "অডিও SOS রেকর্ডার")
                                 },
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp,
@@ -292,7 +301,11 @@ fun EvidenceRecordingScreen(
                                         Icon(Icons.Default.Mic, contentDescription = null, modifier = Modifier.size(18.dp))
                                         Spacer(modifier = Modifier.width(6.dp))
                                         Text(
-                                            text = tr("START AUDIO RECORDING", "ऑडियो रिकॉर्डिंग शुरू करें"),
+                                            text = tr(
+                                                "START AUDIO RECORDING",
+                                                "ऑडियो रिकॉर्डिंग शुरू करें",
+                                                "অডিও রেকর্ডিং শুরু করুন"
+                                            ),
                                             fontWeight = FontWeight.Bold
                                         )
                                     }
@@ -311,7 +324,11 @@ fun EvidenceRecordingScreen(
                                         Icon(Icons.Default.Stop, contentDescription = null, modifier = Modifier.size(18.dp))
                                         Spacer(modifier = Modifier.width(6.dp))
                                         Text(
-                                            text = tr("STOP & SECURE AUDIO RECORDING", "रिकॉर्डिंग रोकें और सहेजें"),
+                                            text = tr(
+                                                "STOP & SECURE AUDIO RECORDING",
+                                                "रिकॉर्डिंग रोकें और सहेजें",
+                                                "রেকর্ডিং বন্ধ ও সংরক্ষণ করুন"
+                                            ),
                                             fontWeight = FontWeight.Bold
                                         )
                                     }
@@ -326,7 +343,8 @@ fun EvidenceRecordingScreen(
                     Text(
                         text = tr(
                             "SAVED AUDIO EVIDENCE FILES (${audioFiles.size})",
-                            "सहेजी गई ऑडियो फ़ाइलें (${audioFiles.size})"
+                            "सहेजी गई ऑडियो फ़ाइलें (${audioFiles.size})",
+                            "সংরক্ষিত অডিও ফাইল (${audioFiles.size})"
                         ),
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
@@ -339,7 +357,11 @@ fun EvidenceRecordingScreen(
                 if (audioFiles.isEmpty()) {
                     item {
                         Text(
-                            text = tr("No audio evidence recorded yet.", "अभी तक कोई ऑडियो सबूत रिकॉर्ड नहीं किया गया है।"),
+                            text = tr(
+                                "No audio evidence recorded yet.",
+                                "अभी तक कोई ऑडियो सबूत रिकॉर्ड नहीं किया गया है।",
+                                "এখনো কোনো অডিও প্রমাণ রেকর্ড করা হয়নি।"
+                            ),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(vertical = 8.dp)
@@ -372,7 +394,11 @@ fun EvidenceRecordingScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = tr("Video SOS Documentation", "वीडियो SOS रिकॉर्डिंग"),
+                                text = tr(
+                                    "Video SOS Documentation",
+                                    "वीडियो SOS रिकॉर्डिंग",
+                                    "ভিডিও SOS রেকর্ডিং"
+                                ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
                             )
@@ -380,7 +406,8 @@ fun EvidenceRecordingScreen(
                             Text(
                                 text = tr(
                                     "Record video documentation of approaching individuals, vehicle registration numbers, or surroundings with verified timestamps.",
-                                    "पास आने वाले व्यक्तियों, वाहन नंबर प्लेट या आसपास के माहौल का समय के साथ वीडियो सबूत रिकॉर्ड करें।"
+                                    "पास आने वाले व्यक्तियों, वाहन नंबर प्लेट या आसपास के माहौल का समय के साथ वीडियो सबूत रिकॉर्ड करें।",
+                                    "কাছে আসা ব্যক্তি, গাড়ির নম্বর প্লেট বা চারপাশের পরিবেশের সময়সহ ভিডিও প্রমাণ রেকর্ড করুন।"
                                 ),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -423,7 +450,13 @@ fun EvidenceRecordingScreen(
                             ) {
                                 Icon(Icons.Default.Videocam, contentDescription = null, modifier = Modifier.size(18.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text(tr("ACTIVATE VIDEO EVIDENCE RECORDING", "वीडियो रिकॉर्डिंग शुरू करें"))
+                                Text(
+                                    tr(
+                                        "ACTIVATE VIDEO EVIDENCE RECORDING",
+                                        "वीडियो रिकॉर्डिंग शुरू करें",
+                                        "ভিডিও রেকর্ডিং শুরু করুন"
+                                    )
+                                )
                             }
                         }
                     }
@@ -459,7 +492,7 @@ fun MediaFileCard(
             IconButton(onClick = onPlayToggle) {
                 Icon(
                     imageVector = if (isPlaying) Icons.Default.Stop else Icons.Default.PlayArrow,
-                    contentDescription = tr("Play/Stop", "चलाएँ/रोकें"),
+                    contentDescription = tr("Play/Stop", "चलाएँ/रोकें", "চালান/থামান"),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -486,7 +519,7 @@ fun MediaFileCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.Share,
-                    contentDescription = tr("Share", "साझा करें"),
+                    contentDescription = tr("Share", "साझा करें", "শেয়ার করুন"),
                     tint = SafeGreen
                 )
             }

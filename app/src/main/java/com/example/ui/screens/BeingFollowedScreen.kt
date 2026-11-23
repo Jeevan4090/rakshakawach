@@ -62,7 +62,11 @@ fun BeingFollowedScreen(
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = tr("I Am Being Followed", "कोई मेरा पीछा कर रहा है"),
+                title = tr(
+                    "I Am Being Followed",
+                    "कोई मेरा पीछा कर रहा है",
+                    "কেউ আমাকে অনুসরণ করছে"
+                ),
                 onBackClick = onNavigateBack
             )
         }
@@ -92,7 +96,8 @@ fun BeingFollowedScreen(
                     Text(
                         text = tr(
                             "ONE-TAP CALL 112 (EMERGENCY POLICE)",
-                            "1-टैप कॉल 112 (आपातकालीन पुलिस)"
+                            "1-टैप कॉल 112 (आपातकालीन पुलिस)",
+                            "১-ট্যাপ কল 112 (জরুরি পুলিশ)"
                         ),
                         fontWeight = FontWeight.Black,
                         fontSize = 13.sp
@@ -117,7 +122,11 @@ fun BeingFollowedScreen(
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = tr("IMMEDIATE SAFETY ACTIONS", "तत्काल सुरक्षा कदम"),
+                                text = tr(
+                                    "IMMEDIATE SAFETY ACTIONS",
+                                    "तत्काल सुरक्षा कदम",
+                                    "তাৎক্ষণিক নিরাপত্তা পদক্ষেপ"
+                                ),
                                 fontWeight = FontWeight.Black,
                                 fontSize = 14.sp,
                                 color = Color(0xFF78350F)
@@ -128,28 +137,32 @@ fun BeingFollowedScreen(
                             number = "1",
                             text = tr(
                                 "MOVE TO A BUSY, WELL-LIT PUBLIC AREA immediately — enter an open store, pharmacy, metro station, restaurant, or bank ATM with a guard.",
-                                "तुरंत किसी भीड़भाड़ वाले, रोशनी वाले सार्वजनिक स्थान पर जाएँ — किसी खुली दुकान, मेडिकल स्टोर, मेट्रो स्टेशन, रेस्तरां या गार्ड वाले बैंक ATM में प्रवेश करें।"
+                                "तुरंत किसी भीड़भाड़ वाले, रोशनी वाले सार्वजनिक स्थान पर जाएँ — किसी खुली दुकान, मेडिकल स्टोर, मेट्रो स्टेशन, रेस्तरां या गार्ड वाले बैंक ATM में प्रवेश करें।",
+                                "অবিলম্বে একটি জনবহুল ও আলোকিত স্থানে যান — কোনো খোলা দোকান, ফার্মেসি, মেট্রো স্টেশন, রেস্তোরাঁ বা নিরাপত্তারক্ষী থাকা ব্যাংক ATM-এ প্রবেশ করুন।"
                             )
                         )
                         SafetyStepItem(
                             number = "2",
                             text = tr(
                                 "DO NOT CONFRONT the suspected follower under any circumstance. Keep moving steadily.",
-                                "किसी भी स्थिति में पीछा करने वाले व्यक्ति से बहस या सामना न करें। लगातार चलते रहें।"
+                                "किसी भी स्थिति में पीछा करने वाले व्यक्ति से बहस या सामना न करें। लगातार चलते रहें।",
+                                "কোনো অবস্থাতেই সন্দেহভাজন ব্যক্তির সাথে তর্ক বা মুখোমুখি হবেন না। স্থিরভাবে হাঁটতে থাকুন।"
                             )
                         )
                         SafetyStepItem(
                             number = "3",
                             text = tr(
                                 "Approach security personnel, store managers, or trusted members of the public and state clearly: 'Someone is following me, please stay with me.'",
-                                "सुरक्षा गार्ड, दुकान के मैनेजर या आसपास के लोगों के पास जाएँ और स्पष्ट कहें: 'कोई मेरा पीछा कर रहा है, कृपया मेरे साथ रहें।'"
+                                "सुरक्षा गार्ड, दुकान के मैनेजर या आसपास के लोगों के पास जाएँ और स्पष्ट कहें: 'कोई मेरा पीछा कर रहा है, कृपया मेरे साथ रहें।'",
+                                "নিরাপত্তারক্ষী, দোকানের ম্যানেজার বা আশেপাশের মানুষের কাছে যান এবং স্পষ্টভাবে বলুন: 'কেউ আমাকে অনুসরণ করছে, দয়া করে আমার সাথে থাকুন।'"
                             )
                         )
                         SafetyStepItem(
                             number = "4",
                             text = tr(
                                 "Avoid heading directly to an empty or isolated home. Remain in public view until safe.",
-                                "सीधे सुनसान या खाली घर न जाएँ। पूरी तरह सुरक्षित होने तक सार्वजनिक स्थान पर ही रहें।"
+                                "सीधे सुनसान या खाली घर न जाएँ। पूरी तरह सुरक्षित होने तक सार्वजनिक स्थान पर ही रहें।",
+                                "সরাসরি ফাঁকা বা নির্জন বাড়িতে যাওয়া এড়িয়ে চলুন। পুরোপুরি নিরাপদ না হওয়া পর্যন্ত জনসমক্ষে থাকুন।"
                             )
                         )
                     }
@@ -173,7 +186,11 @@ fun BeingFollowedScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = tr("Nearest Police Stations", "नज़दीकी पुलिस स्टेशन"),
+                                text = tr(
+                                    "Nearest Police Stations",
+                                    "नज़दीकी पुलिस स्टेशन",
+                                    "নিকটতম থানা"
+                                ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 15.sp
                             )
@@ -182,7 +199,8 @@ fun BeingFollowedScreen(
                         Text(
                             text = tr(
                                 "Find verified local police stations near your current GPS position via Google Maps navigation.",
-                                "Google Maps के माध्यम से अपनी वर्तमान GPS लोकेशन के पास के पुलिस स्टेशन खोजें।"
+                                "Google Maps के माध्यम से अपनी वर्तमान GPS लोकेशन के पास के पुलिस स्टेशन खोजें।",
+                                "Google Maps নেভিগেশনের মাধ্যমে আপনার বর্তমান GPS অবস্থানের কাছাকাছি থানা খুঁজুন।"
                             ),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -200,7 +218,11 @@ fun BeingFollowedScreen(
                             Icon(Icons.Default.LocalPolice, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                tr("Open Nearby Police Stations in Maps", "Maps में नज़दीकी पुलिस स्टेशन देखें")
+                                tr(
+                                    "Open Nearby Police Stations in Maps",
+                                    "Maps में नज़दीकी पुलिस स्टेशन देखें",
+                                    "Maps-এ নিকটতম থানা দেখুন"
+                                )
                             )
                         }
                     }
@@ -224,7 +246,11 @@ fun BeingFollowedScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = tr("Live Location Sharing", "लाइव लोकेशन साझा करना"),
+                                text = tr(
+                                    "Live Location Sharing",
+                                    "लाइव लोकेशन साझा करना",
+                                    "লাইভ লোকেশন শেয়ারিং"
+                                ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 15.sp
                             )
@@ -232,11 +258,16 @@ fun BeingFollowedScreen(
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             text = if (isLiveTracking) {
-                                tr("Live GPS stream is broadcasting.", "लाइव GPS लोकेशन साझा हो रही है।")
+                                tr(
+                                    "Live GPS stream is broadcasting.",
+                                    "लाइव GPS लोकेशन साझा हो रही है।",
+                                    "লাইভ GPS লোকেশন শেয়ার করা হচ্ছে।"
+                                )
                             } else {
                                 tr(
                                     "Broadcast your exact movement coordinates to your emergency contacts.",
-                                    "अपने आपातकालीन संपर्कों को अपनी सटीक लोकेशन भेजें।"
+                                    "अपने आपातकालीन संपर्कों को अपनी सटीक लोकेशन भेजें।",
+                                    "আপনার জরুরি যোগাযোগগুলোতে আপনার সঠিক অবস্থান পাঠান।"
                                 )
                             },
                             fontSize = 12.sp,
@@ -257,9 +288,9 @@ fun BeingFollowedScreen(
                             ) {
                                 Text(
                                     if (isLiveTracking) {
-                                        tr("Stop Live Stream", "लाइव रोकें")
+                                        tr("Stop Live Stream", "लाइव रोकें", "লাইভ বন্ধ করুন")
                                     } else {
-                                        tr("Start Live GPS", "लाइव GPS शुरू करें")
+                                        tr("Start Live GPS", "लाइव GPS शुरू करें", "লাইভ GPS শুরু করুন")
                                     }
                                 )
                             }
@@ -269,7 +300,7 @@ fun BeingFollowedScreen(
                                     .weight(1f)
                                     .testTag("view_live_map_button")
                             ) {
-                                Text(tr("View Map Details", "मैप विवरण देखें"))
+                                Text(tr("View Map Details", "मैप विवरण देखें", "ম্যাপ বিবরণ দেখুন"))
                             }
                         }
                     }
@@ -295,7 +326,8 @@ fun BeingFollowedScreen(
                             Text(
                                 text = tr(
                                     "Discreet SOS Alert & Documentation",
-                                    "गुप्त SOS अलर्ट और सबूत रिकॉर्डिंग"
+                                    "गुप्त SOS अलर्ट और सबूत रिकॉर्डिंग",
+                                    "গোপন SOS অ্যালার্ট ও প্রমাণ সংরক্ষণ"
                                 ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
@@ -305,7 +337,8 @@ fun BeingFollowedScreen(
                         Text(
                             text = tr(
                                 "Silently send an urgent alert text to your ${contacts.size} contacts without sounding alarms.",
-                                "बिना किसी अलार्म के अपने ${contacts.size} संपर्कों को चुपचाप आपातकालीन संदेश भेजें।"
+                                "बिना किसी अलार्म के अपने ${contacts.size} संपर्कों को चुपचाप आपातकालीन संदेश भेजें।",
+                                "কোনো অ্যালার্ম ছাড়াই আপনার ${contacts.size}টি যোগাযোগে নীরবে জরুরি সতর্কবার্তা পাঠান।"
                             ),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -321,7 +354,7 @@ fun BeingFollowedScreen(
                                     .weight(1f)
                                     .testTag("discreet_sos_button")
                             ) {
-                                Text(tr("Discreet SOS", "गुप्त SOS"), fontSize = 12.sp)
+                                Text(tr("Discreet SOS", "गुप्त SOS", "গোপন SOS"), fontSize = 12.sp)
                             }
                             OutlinedButton(
                                 onClick = onNavigateToRecord,
@@ -331,7 +364,7 @@ fun BeingFollowedScreen(
                             ) {
                                 Icon(Icons.Default.Mic, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text(tr("Audio Evidence", "ऑडियो सबूत"), fontSize = 12.sp)
+                                Text(tr("Audio Evidence", "ऑडियो सबूत", "অডিও প্রমাণ"), fontSize = 12.sp)
                             }
                         }
                     }

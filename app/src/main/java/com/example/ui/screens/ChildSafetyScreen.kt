@@ -66,7 +66,11 @@ fun ChildSafetyScreen(
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = tr("Child Safety & POCSO Help", "बाल सुरक्षा और POCSO सहायता"),
+                title = tr(
+                    "Child Safety & POCSO Help",
+                    "बाल सुरक्षा और POCSO सहायता",
+                    "শিশু সুরক্ষা ও POCSO সহায়তা"
+                ),
                 onBackClick = onNavigateBack
             )
         }
@@ -98,7 +102,11 @@ fun ChildSafetyScreen(
                         Icon(Icons.Default.ChildCare, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = tr("DIAL 1098\n(CHILDLINE)", "1098 डायल करें\n(चाइल्डलाइन)"),
+                            text = tr(
+                                "DIAL 1098\n(CHILDLINE)",
+                                "1098 डायल करें\n(चाइल्डलाइन)",
+                                "1098 ডায়াল করুন\n(চাইল্ডলাইন)"
+                            ),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Black
                         )
@@ -116,7 +124,11 @@ fun ChildSafetyScreen(
                         Icon(Icons.Default.Call, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = tr("DIAL 112\n(POLICE ERSS)", "112 डायल करें\n(पुलिस ERSS)"),
+                            text = tr(
+                                "DIAL 112\n(POLICE ERSS)",
+                                "112 डायल करें\n(पुलिस ERSS)",
+                                "112 ডায়াল করুন\n(পুলিশ ERSS)"
+                            ),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Black
                         )
@@ -146,7 +158,8 @@ fun ChildSafetyScreen(
                             Text(
                                 text = tr(
                                     "Strict Child Privacy & Legal Confidentiality",
-                                    "बच्चों की गोपनीयता और कानूनी सुरक्षा"
+                                    "बच्चों की गोपनीयता और कानूनी सुरक्षा",
+                                    "শিশুর গোপনীয়তা ও আইনি সুরক্ষা"
                                 ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 13.sp,
@@ -156,7 +169,8 @@ fun ChildSafetyScreen(
                             Text(
                                 text = tr(
                                     "Under Section 23 of the POCSO Act, publishing or broadcasting the identity, school, photograph, or address of a child victim/survivor is strictly prohibited by law. Prioritize the child's physical safety, warmth, and immediate protection.",
-                                    "POCSO अधिनियम की धारा 23 के तहत, पीड़ित बच्चे की पहचान, स्कूल, फोटो या पता प्रकाशित या प्रसारित करना कानूनन सख्त मना है। बच्चे की शारीरिक सुरक्षा, स्नेह और तत्काल संरक्षण को प्राथमिकता दें।"
+                                    "POCSO अधिनियम की धारा 23 के तहत, पीड़ित बच्चे की पहचान, स्कूल, फोटो या पता प्रकाशित या प्रसारित करना कानूनन सख्त मना है। बच्चे की शारीरिक सुरक्षा, स्नेह और तत्काल संरक्षण को प्राथमिकता दें।",
+                                    "POCSO আইনের ২৩ ধারা অনুযায়ী, ভুক্তভোগী শিশুর পরিচয়, স্কুল, ছবি বা ঠিকানা প্রকাশ বা প্রচার করা আইনত সম্পূর্ণ নিষিদ্ধ। শিশুর শারীরিক নিরাপত্তা, যত্ন এবং তাৎক্ষণিক সুরক্ষাকে অগ্রাধিকার দিন।"
                                 ),
                                 fontSize = 11.sp,
                                 color = Color(0xFF1E40AF),
@@ -186,7 +200,8 @@ fun ChildSafetyScreen(
                             Text(
                                 text = tr(
                                     "What to do if a child is in danger",
-                                    "यदि कोई बच्चा खतरे में हो तो क्या करें"
+                                    "यदि कोई बच्चा खतरे में हो तो क्या करें",
+                                    "কোনো শিশু বিপদে থাকলে কী করবেন"
                                 ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
@@ -196,7 +211,8 @@ fun ChildSafetyScreen(
                         Text(
                             text = tr(
                                 "1. REMOVE FROM IMMEDIATE DANGER: Ensure the child is in a safe room with trusted adults.\n2. CALL 1098: Childline provides 24x7 emergency outreach, medical care, counseling, and Child Welfare Committee (CWC) escalation.\n3. CALL 112: If an offender is present or active violence is occurring, request immediate police arrival.\n4. ONLINE EXPLOITATION: Report child sexual abuse material (CSAM) immediately at cybercrime.gov.in (National Cyber Crime Portal).",
-                                "1. तत्काल खतरे से दूर करें: सुनिश्चित करें कि बच्चा विश्वसनीय बड़ों के साथ एक सुरक्षित कमरे में हो।\n2. 1098 पर कॉल करें: चाइल्डलाइन 24x7 आपातकालीन सहायता, चिकित्सा देखभाल, परामर्श और बाल कल्याण समिति (CWC) की मदद प्रदान करती है।\n3. 112 पर कॉल करें: यदि अपराधी आसपास हो या हिंसा हो रही हो, तो तुरंत पुलिस बुलाएँ।\n4. ऑनलाइन शोषण: बाल यौन शोषण सामग्री (CSAM) की तुरंत cybercrime.gov.in (राष्ट्रीय साइबर क्राइम पोर्टल) पर रिपोर्ट करें।"
+                                "1. तत्काल खतरे से दूर करें: सुनिश्चित करें कि बच्चा विश्वसनीय बड़ों के साथ एक सुरक्षित कमरे में हो।\n2. 1098 पर कॉल करें: चाइल्डलाइन 24x7 आपातकालीन सहायता, चिकित्सा देखभाल, परामर्श और बाल कल्याण समिति (CWC) की मदद प्रदान करती है।\n3. 112 पर कॉल करें: यदि अपराधी आसपास हो या हिंसा हो रही हो, तो तुरंत पुलिस बुलाएँ।\n4. ऑनलाइन शोषण: बाल यौन शोषण सामग्री (CSAM) की तुरंत cybercrime.gov.in (राष्ट्रीय साइबर क्राइम पोर्टल) पर रिपोर्ट करें।",
+                                "১. তাৎক্ষণিক বিপদ থেকে সরিয়ে নিন: নিশ্চিত করুন শিশুটি বিশ্বস্ত বড়দের সাথে নিরাপদ স্থানে আছে।\n২. 1098-এ কল করুন: চাইল্ডলাইন ২৪x৭ জরুরি সহায়তা, চিকিৎসা, কাউন্সেলিং এবং শিশু কল্যাণ কমিটির (CWC) সহায়তা প্রদান করে।\n৩. 112-এ কল করুন: অপরাধী আশেপাশে থাকলে বা সহিংসতা চললে অবিলম্বে পুলিশ ডাকুন।\n৪. অনলাইন শোষণ: শিশু যৌন নির্যাতন সংক্রান্ত সামগ্রী (CSAM) অবিলম্বে cybercrime.gov.in (জাতীয় সাইবার ক্রাইম পোর্টাল)-এ রিপোর্ট করুন।"
                             ),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -215,7 +231,8 @@ fun ChildSafetyScreen(
                             Text(
                                 tr(
                                     "Report CSAM on cybercrime.gov.in",
-                                    "cybercrime.gov.in पर CSAM की रिपोर्ट करें"
+                                    "cybercrime.gov.in पर CSAM की रिपोर्ट करें",
+                                    "cybercrime.gov.in-এ CSAM রিপোর্ট করুন"
                                 )
                             )
                         }
@@ -237,7 +254,8 @@ fun ChildSafetyScreen(
                             Text(
                                 text = tr(
                                     "Secure Child Concern Note (Offline)",
-                                    "सुरक्षित बाल सुरक्षा नोट (ऑफ़लाइन)"
+                                    "सुरक्षित बाल सुरक्षा नोट (ऑफ़लाइन)",
+                                    "সুরক্ষিত শিশু সুরক্ষা নোট (অফলাইন)"
                                 ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
@@ -247,7 +265,8 @@ fun ChildSafetyScreen(
                         Text(
                             text = tr(
                                 "Kept strictly offline on device. Do not record unnecessary graphic descriptions.",
-                                "केवल आपके फोन में ऑफ़लाइन सुरक्षित। अनावश्यक संवेदनशील विवरण न लिखें।"
+                                "केवल आपके फोन में ऑफ़लाइन सुरक्षित। अनावश्यक संवेदनशील विवरण न लिखें।",
+                                "শুধুমাত্র আপনার ফোনে অফলাইনে সুরক্ষিত। অপ্রয়োজনীয় সংবেদনশীল বিবরণ লিখবেন না।"
                             ),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -259,10 +278,22 @@ fun ChildSafetyScreen(
                             value = situationNotes,
                             onValueChange = { situationNotes = it },
                             label = {
-                                Text(tr("Nature of Concern / Observed Situation", "चिंता का विषय / देखी गई स्थिति"))
+                                Text(
+                                    tr(
+                                        "Nature of Concern / Observed Situation",
+                                        "चिंता का विषय / देखी गई स्थिति",
+                                        "উদ্বেগের বিষয় / পর্যবেক্ষিত পরিস্থিতি"
+                                    )
+                                )
                             },
                             placeholder = {
-                                Text(tr("e.g. Distress observed, neglect, harassment...", "जैसे: तनाव, उपेक्षा, उत्पीड़न..."))
+                                Text(
+                                    tr(
+                                        "e.g. Distress observed, neglect, harassment...",
+                                        "जैसे: तनाव, उपेक्षा, उत्पीड़न...",
+                                        "যেমন: মানসিক চাপ, অবহেলা, হয়রানি..."
+                                    )
+                                )
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -275,7 +306,15 @@ fun ChildSafetyScreen(
                         OutlinedTextField(
                             value = locationArea,
                             onValueChange = { locationArea = it },
-                            label = { Text(tr("Locality / Area Landmark", "क्षेत्र / पहचान चिह्न")) },
+                            label = {
+                                Text(
+                                    tr(
+                                        "Locality / Area Landmark",
+                                        "क्षेत्र / पहचान चिह्न",
+                                        "এলাকা / ল্যান্ডমার্ক"
+                                    )
+                                )
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true
                         )
@@ -289,7 +328,8 @@ fun ChildSafetyScreen(
                                 Text(
                                     tr(
                                         "Actions Taken (e.g., Contacted Childline 1098, CWC)",
-                                        "की गई कार्रवाई (जैसे: चाइल्डलाइन 1098 या CWC से संपर्क)"
+                                        "की गई कार्रवाई (जैसे: चाइल्डलाइन 1098 या CWC से संपर्क)",
+                                        "গৃহীত পদক্ষেপ (যেমন: চাইল্ডলাইন 1098 বা CWC-তে যোগাযোগ)"
                                     )
                                 )
                             },
@@ -303,7 +343,8 @@ fun ChildSafetyScreen(
                             Text(
                                 text = tr(
                                     "Note saved securely to your offline vault.",
-                                    "नोट आपके ऑफ़लाइन वॉल्ट में सुरक्षित रूप से सहेजा गया।"
+                                    "नोट आपके ऑफ़लाइन वॉल्ट में सुरक्षित रूप से सहेजा गया।",
+                                    "নোটটি আপনার অফলাইন ভল্টে নিরাপদে সংরক্ষিত হয়েছে।"
                                 ),
                                 color = SafeGreen,
                                 fontWeight = FontWeight.Bold,
@@ -330,7 +371,13 @@ fun ChildSafetyScreen(
                                 .fillMaxWidth()
                                 .testTag("save_child_report_button")
                         ) {
-                            Text(tr("Save Confidential Child Safety Note", "गोपनीय बाल सुरक्षा नोट सहेजें"))
+                            Text(
+                                tr(
+                                    "Save Confidential Child Safety Note",
+                                    "गोपनीय बाल सुरक्षा नोट सहेजें",
+                                    "গোপনীয় শিশু সুরক্ষা নোট সংরক্ষণ করুন"
+                                )
+                            )
                         }
                     }
                 }

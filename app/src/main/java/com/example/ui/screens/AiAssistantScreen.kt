@@ -56,6 +56,7 @@ import com.example.data.ChatMessage
 import com.example.data.EmergencyAlertHelper
 import com.example.data.GoogleAuthHelper
 import com.example.data.MessageSender
+import com.example.ui.AppLang
 import com.example.ui.AppLanguage
 import com.example.ui.RakshaViewModel
 import com.example.ui.components.RakshaTopAppBar
@@ -86,16 +87,22 @@ fun AiAssistantScreen(
         }
     }
 
-    val quickPrompts = if (AppLanguage.isHindi) {
-        listOf(
+    val quickPrompts = when (AppLanguage.current) {
+        AppLang.HINDI -> listOf(
             "कोई मेरा पीछा कर रहा है।",
             "मुझे धमकी भरे संदेश मिल रहे हैं।",
             "कार्यस्थल पर उत्पीड़न की शिकायत कैसे करें?",
             "साइबर स्टॉकिंग की रिपोर्ट कैसे करें?",
             "मुझे नज़दीकी पुलिस स्टेशन खोजने में मदद चाहिए।"
         )
-    } else {
-        listOf(
+        AppLang.BENGALI -> listOf(
+            "কেউ আমাকে অনুসরণ করছে।",
+            "আমি হুমকিমূলক বার্তা পাচ্ছি।",
+            "কর্মক্ষেত্রে হয়রানির অভিযোগ কীভাবে করব?",
+            "সাইবার স্টকিংয়ের অভিযোগ কীভাবে করব?",
+            "আমার কাছাকাছি থানা খুঁজতে সাহায্য দরকার।"
+        )
+        AppLang.ENGLISH -> listOf(
             "Someone is following me.",
             "I am receiving threatening messages.",
             "How do I report workplace harassment?",
@@ -113,7 +120,11 @@ fun AiAssistantScreen(
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = tr("Chat with Rakshak Assistant", "रक्षक असिस्टेंट से चैट करें"),
+                title = tr(
+                    "Chat with Rakshak Assistant",
+                    "रक्षक असिस्टेंट से चैट करें",
+                    "রক্ষক অ্যাসিস্ট্যান্টের সাথে চ্যাট করুন"
+                ),
                 onBackClick = onNavigateBack
             )
         }
@@ -147,7 +158,8 @@ fun AiAssistantScreen(
                     Text(
                         text = tr(
                             "Notice: Raksha Assistant is an AI informational tool. It is NOT a replacement for emergency responders, police, legal advocates, or medical doctors. If in immediate danger, dial 112 below.",
-                            "सूचना: रक्षा असिस्टेंट एक AI सूचनात्मक टूल है। यह पुलिस, आपातकालीन सेवाओं, वकील या डॉक्टर का विकल्प नहीं है। तुरंत खतरे में हों तो 112 डायल करें।"
+                            "सूचना: रक्षा असिस्टेंट एक AI सूचनात्मक टूल है। यह पुलिस, आपातकालीन सेवाओं, वकील या डॉक्टर का विकल्प नहीं है। तुरंत खतरे में हों तो 112 डायल करें।",
+                            "বিজ্ঞপ্তি: রক্ষা অ্যাসিস্ট্যান্ট একটি AI তথ্যমূলক টুল। এটি পুলিশ, জরুরি পরিষেবা, আইনজীবী বা ডাক্তারের বিকল্প নয়। তাৎক্ষণিক বিপদে থাকলে নিচে 112 ডায়াল করুন।"
                         ),
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -166,7 +178,11 @@ fun AiAssistantScreen(
             ) {
                 if (signedInEmail == null) {
                     Text(
-                        text = tr("Offline mode (sign in for Live AI)", "ऑफ़लाइन मोड (लाइव AI के लिए साइन इन करें)"),
+                        text = tr(
+                            "Offline mode (sign in for Live AI)",
+                            "ऑफ़लाइन मोड (लाइव AI के लिए साइन इन करें)",
+                            "অফলাইন মোড (লাইভ AI-এর জন্য সাইন ইন করুন)"
+                        ),
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -181,13 +197,21 @@ fun AiAssistantScreen(
                                         viewModel.setGoogleAuth(auth.idToken, auth.email)
                                         Toast.makeText(
                                             context,
-                                            tr("Signed in as ${auth.email}", "${auth.email} से साइन इन हुआ"),
+                                            tr(
+                                                "Signed in as ${auth.email}",
+                                                "${auth.email} से साइन इन हुआ",
+                                                "${auth.email} হিসেবে সাইন ইন হয়েছে"
+                                            ),
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     } else {
                                         Toast.makeText(
                                             context,
-                                            tr("Google Sign-In cancelled or failed", "Google साइन-इन रद्द या विफल हुआ"),
+                                            tr(
+                                                "Google Sign-In cancelled or failed",
+                                                "Google साइन-इन रद्द या विफल हुआ",
+                                                "Google সাইন-ইন বাতিল বা ব্যর্থ হয়েছে"
+                                            ),
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
@@ -199,16 +223,20 @@ fun AiAssistantScreen(
                     ) {
                         Text(
                             text = if (isSigningIn) {
-                                tr("Signing in...", "साइन इन हो रहा है...")
+                                tr("Signing in...", "साइन इन हो रहा है...", "সাইন ইন হচ্ছে...")
                             } else {
-                                tr("Sign in with Google", "Google से साइन इन करें")
+                                tr("Sign in with Google", "Google से साइन इन करें", "Google দিয়ে সাইন ইন করুন")
                             },
                             fontSize = 11.sp
                         )
                     }
                 } else {
                     Text(
-                        text = tr("Live AI active ($signedInEmail)", "लाइव AI सक्रिय ($signedInEmail)"),
+                        text = tr(
+                            "Live AI active ($signedInEmail)",
+                            "लाइव AI सक्रिय ($signedInEmail)",
+                            "লাইভ AI সক্রিয় ($signedInEmail)"
+                        ),
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Medium
@@ -220,7 +248,7 @@ fun AiAssistantScreen(
                         },
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
                     ) {
-                        Text(tr("Sign out", "साइन आउट"), fontSize = 11.sp)
+                        Text(tr("Sign out", "साइन आउट", "সাইন আউট"), fontSize = 11.sp)
                     }
                 }
             }
@@ -273,7 +301,8 @@ fun AiAssistantScreen(
                             Text(
                                 text = tr(
                                     "Raksha Assistant is evaluating safety guidance...",
-                                    "रक्षा असिस्टेंट सुरक्षा मार्गदर्शन तैयार कर रहा है..."
+                                    "रक्षा असिस्टेंट सुरक्षा मार्गदर्शन तैयार कर रहा है...",
+                                    "রক্ষা অ্যাসিস্ট্যান্ট নিরাপত্তা নির্দেশিকা তৈরি করছে..."
                                 ),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -299,7 +328,13 @@ fun AiAssistantScreen(
                         value = inputText,
                         onValueChange = { inputText = it },
                         placeholder = {
-                            Text(tr("Ask Raksha Assistant for safety advice...", "सुरक्षा सलाह के लिए पूछें..."))
+                            Text(
+                                tr(
+                                    "Ask Raksha Assistant for safety advice...",
+                                    "सुरक्षा सलाह के लिए पूछें...",
+                                    "নিরাপত্তা পরামর্শের জন্য জিজ্ঞাসা করুন..."
+                                )
+                            )
                         },
                         modifier = Modifier
                             .weight(1f)
@@ -322,7 +357,7 @@ fun AiAssistantScreen(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = tr("Send", "भेजें"),
+                            contentDescription = tr("Send", "भेजें", "পাঠান"),
                             tint = if (inputText.isNotBlank()) CrimsonPrimary else Color.Gray
                         )
                     }
@@ -372,7 +407,11 @@ fun ChatBubble(
                             Icon(Icons.Default.Warning, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = tr("POTENTIAL DANGER DETECTED", "संभावित खतरा पाया गया"),
+                                text = tr(
+                                    "POTENTIAL DANGER DETECTED",
+                                    "संभावित खतरा पाया गया",
+                                    "সম্ভাব্য বিপদ শনাক্ত হয়েছে"
+                                ),
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 11.sp
@@ -399,7 +438,11 @@ fun ChatBubble(
                         Icon(Icons.Default.Call, contentDescription = null, modifier = Modifier.size(14.dp))
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = tr("CALL ${message.recommendedHelpline} NOW", "अभी ${message.recommendedHelpline} पर कॉल करें"),
+                            text = tr(
+                                "CALL ${message.recommendedHelpline} NOW",
+                                "अभी ${message.recommendedHelpline} पर कॉल करें",
+                                "এখনই ${message.recommendedHelpline}-এ কল করুন"
+                            ),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold
                         )

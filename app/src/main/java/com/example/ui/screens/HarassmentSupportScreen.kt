@@ -69,7 +69,7 @@ fun HarassmentSupportScreen(
     Scaffold(
         topBar = {
             RakshaTopAppBar(
-                title = tr("Harassment Support", "उत्पीड़न सहायता"),
+                title = tr("Harassment Support", "उत्पीड़न सहायता", "হয়রানি সহায়তা"),
                 onBackClick = onNavigateBack
             )
         }
@@ -100,7 +100,7 @@ fun HarassmentSupportScreen(
                         Icon(Icons.Default.Call, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = tr("DIAL 112 POLICE", "112 पुलिस डायल करें"),
+                            text = tr("DIAL 112 POLICE", "112 पुलिस डायल करें", "112 পুলিশ ডায়াল করুন"),
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp
                         )
@@ -117,7 +117,7 @@ fun HarassmentSupportScreen(
                         Icon(Icons.Default.Shield, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = tr("181 WOMEN HELPLINE", "181 महिला हेल्पलाइन"),
+                            text = tr("181 WOMEN HELPLINE", "181 महिला हेल्पलाइन", "181 মহিলা হেল্পলাইন"),
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp
                         )
@@ -136,7 +136,8 @@ fun HarassmentSupportScreen(
                         Text(
                             text = tr(
                                 "💜 You Are Not Alone. Your Safety is Valid.",
-                                "💜 आप अकेली नहीं हैं। आपकी सुरक्षा सर्वोपरि है।"
+                                "💜 आप अकेली नहीं हैं। आपकी सुरक्षा सर्वोपरि है।",
+                                "💜 আপনি একা নন। আপনার নিরাপত্তা সবচেয়ে গুরুত্বপূর্ণ।"
                             ),
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
@@ -146,7 +147,8 @@ fun HarassmentSupportScreen(
                         Text(
                             text = tr(
                                 "Harassment is never your fault. Whether street stalking, verbal intimidation, or persistent harassment, you have full legal rights under Indian Law (Bharatiya Nyaya Sanhita). Take care of your immediate safety first.",
-                                "उत्पीड़न कभी भी आपकी गलती नहीं है। चाहे सड़क पर पीछा करना हो, मौखिक धमकी हो या लगातार उत्पीड़न, भारतीय कानून (भारतीय न्याय संहिता) के तहत आपके पास पूरे कानूनी अधिकार हैं। सबसे पहले अपनी तत्काल सुरक्षा का ध्यान रखें।"
+                                "उत्पीड़न कभी भी आपकी गलती नहीं है। चाहे सड़क पर पीछा करना हो, मौखिक धमकी हो या लगातार उत्पीड़न, भारतीय कानून (भारतीय न्याय संहिता) के तहत आपके पास पूरे कानूनी अधिकार हैं। सबसे पहले अपनी तत्काल सुरक्षा का ध्यान रखें।",
+                                "হয়রানি কখনোই আপনার দোষ নয়। রাস্তায় অনুসরণ করা, মৌখিক হুমকি বা ক্রমাগত হয়রানি যাই হোক না কেন, ভারতীয় আইনের (ভারতীয় ন্যায় সংহিতা) অধীনে আপনার সম্পূর্ণ আইনি অধিকার রয়েছে। প্রথমে আপনার তাৎক্ষণিক নিরাপত্তার খেয়াল রাখুন।"
                             ),
                             fontSize = 12.sp,
                             color = Color(0xFF6B21A8),
@@ -173,7 +175,11 @@ fun HarassmentSupportScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = tr("How to Preserve Evidence Safely", "सबूत सुरक्षित रूप से कैसे सहेजें"),
+                                text = tr(
+                                    "How to Preserve Evidence Safely",
+                                    "सबूत सुरक्षित रूप से कैसे सहेजें",
+                                    "নিরাপদে প্রমাণ সংরক্ষণ করার উপায়"
+                                ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
                             )
@@ -182,7 +188,8 @@ fun HarassmentSupportScreen(
                         Text(
                             text = tr(
                                 "• Keep original message chains, dates, times, and phone numbers.\n• Do not alter, edit, or delete screenshots or chat logs.\n• Note physical appearance, clothing, vehicle license plate numbers, or directions.\n• Record witness details or names of nearby shopkeepers if safe to do so.",
-                                "• मूल संदेश, तारीख, समय और फोन नंबर सुरक्षित रखें।\n• स्क्रीनशॉट या चैट लॉग में कोई बदलाव न करें और न ही उन्हें हटाएँ।\n• व्यक्ति का हुलिया, कपड़े, वाहन का नंबर या दिशा नोट कर लें।\n• यदि सुरक्षित हो, तो गवाहों या आसपास के दुकानदारों के नाम लिख लें।"
+                                "• मूल संदेश, तारीख, समय और फोन नंबर सुरक्षित रखें।\n• स्क्रीनशॉट या चैट लॉग में कोई बदलाव न करें और न ही उन्हें हटाएँ।\n• व्यक्ति का हुलिया, कपड़े, वाहन का नंबर या दिशा नोट कर लें।\n• यदि सुरक्षित हो, तो गवाहों या आसपास के दुकानदारों के नाम लिख लें।",
+                                "• মূল বার্তা, তারিখ, সময় এবং ফোন নম্বর সংরক্ষণ করে রাখুন।\n• স্ক্রিনশট বা চ্যাট লগ পরিবর্তন, এডিট বা মুছে ফেলবেন না।\n• ব্যক্তির চেহারা, পোশাক, গাড়ির নম্বর প্লেট বা কোন দিকে গেছে তা নোট করুন।\n• নিরাপদ হলে প্রত্যক্ষদর্শী বা আশেপাশের দোকানদারদের নাম লিখে রাখুন।"
                             ),
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -211,7 +218,8 @@ fun HarassmentSupportScreen(
                             Text(
                                 text = tr(
                                     "Confidential On-Device Incident Record",
-                                    "गोपनीय घटना रिकॉर्ड (केवल फोन में)"
+                                    "गोपनीय घटना रिकॉर्ड (केवल फोन में)",
+                                    "গোপনীয় ঘটনার রেকর্ড (শুধুমাত্র ফোনে)"
                                 ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 15.sp
@@ -221,7 +229,8 @@ fun HarassmentSupportScreen(
                         Text(
                             text = tr(
                                 "Saved privately only on your device storage. Never automatically uploaded without your consent.",
-                                "यह केवल आपके फोन में निजी रूप से सहेजा जाता है। आपकी अनुमति के बिना कहीं अपलोड नहीं होता।"
+                                "यह केवल आपके फोन में निजी रूप से सहेजा जाता है। आपकी अनुमति के बिना कहीं अपलोड नहीं होता।",
+                                "এটি শুধুমাত্র আপনার ফোনের স্টোরেজে ব্যক্তিগতভাবে সংরক্ষিত থাকে। আপনার সম্মতি ছাড়া কখনোই আপলোড করা হয় না।"
                             ),
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -232,12 +241,15 @@ fun HarassmentSupportScreen(
                         OutlinedTextField(
                             value = incidentText,
                             onValueChange = { incidentText = it },
-                            label = { Text(tr("What happened? (Description)", "क्या हुआ? (विवरण)")) },
+                            label = {
+                                Text(tr("What happened? (Description)", "क्या हुआ? (विवरण)", "কী ঘটেছে? (বিবরণ)"))
+                            },
                             placeholder = {
                                 Text(
                                     tr(
                                         "Describe the harassment event, time, what was said or done...",
-                                        "उत्पीड़न की घटना, समय और क्या कहा या किया गया, लिखें..."
+                                        "उत्पीड़न की घटना, समय और क्या कहा या किया गया, लिखें...",
+                                        "হয়রানির ঘটনা, সময় এবং কী বলা বা করা হয়েছে তা লিখুন..."
                                     )
                                 )
                             },
@@ -252,12 +264,21 @@ fun HarassmentSupportScreen(
                         OutlinedTextField(
                             value = locationInput,
                             onValueChange = { locationInput = it },
-                            label = { Text(tr("Location (Street, Landmark, Metro)", "स्थान (सड़क, पहचान चिह्न, मेट्रो)")) },
+                            label = {
+                                Text(
+                                    tr(
+                                        "Location (Street, Landmark, Metro)",
+                                        "स्थान (सड़क, पहचान चिह्न, मेट्रो)",
+                                        "অবস্থান (রাস্তা, ল্যান্ডমার্ক, মেট্রো)"
+                                    )
+                                )
+                            },
                             placeholder = {
                                 Text(
                                     currentLocation?.toFormattedCoordinates() ?: tr(
                                         "e.g., Near City Center Gate 2",
-                                        "जैसे: सिटी सेंटर गेट 2 के पास"
+                                        "जैसे: सिटी सेंटर गेट 2 के पास",
+                                        "যেমন: সিটি সেন্টার গেট ২-এর কাছে"
                                     )
                                 )
                             },
@@ -274,7 +295,8 @@ fun HarassmentSupportScreen(
                                 Text(
                                     tr(
                                         "Perpetrator details (If known / observable)",
-                                        "आरोपी का विवरण (यदि ज्ञात या देखा गया हो)"
+                                        "आरोपी का विवरण (यदि ज्ञात या देखा गया हो)",
+                                        "অভিযুক্তের বিবরণ (যদি জানা বা দেখা যায়)"
                                     )
                                 )
                             },
@@ -282,7 +304,8 @@ fun HarassmentSupportScreen(
                                 Text(
                                     tr(
                                         "e.g. Red bike, black helmet, approximate age",
-                                        "जैसे: लाल बाइक, काला हेलमेट, अनुमानित उम्र"
+                                        "जैसे: लाल बाइक, काला हेलमेट, अनुमानित उम्र",
+                                        "যেমন: লাল বাইক, কালো হেলমেট, আনুমানিক বয়স"
                                     )
                                 )
                             },
@@ -299,7 +322,8 @@ fun HarassmentSupportScreen(
                                 Text(
                                     tr(
                                         "Evidence notes (e.g. CCTV nearby, witness)",
-                                        "सबूत नोट्स (जैसे: पास में CCTV, गवाह)"
+                                        "सबूत नोट्स (जैसे: पास में CCTV, गवाह)",
+                                        "প্রমাণের নোট (যেমন: কাছাকাছি CCTV, প্রত্যক্ষদর্শী)"
                                     )
                                 )
                             },
@@ -321,7 +345,8 @@ fun HarassmentSupportScreen(
                                 Text(
                                     text = tr(
                                         "Incident report saved securely to your private vault.",
-                                        "घटना रिपोर्ट आपके निजी वॉल्ट में सुरक्षित रूप से सहेजी गई।"
+                                        "घटना रिपोर्ट आपके निजी वॉल्ट में सुरक्षित रूप से सहेजी गई।",
+                                        "ঘটনার রিপোর্ট আপনার ব্যক্তিগত ভল্টে নিরাপদে সংরক্ষিত হয়েছে।"
                                     ),
                                     color = SafeGreen,
                                     fontWeight = FontWeight.Bold,
@@ -352,14 +377,14 @@ fun HarassmentSupportScreen(
                                     .weight(1f)
                                     .testTag("save_harassment_report_button")
                             ) {
-                                Text(tr("Save to Private Vault", "निजी वॉल्ट में सहेजें"))
+                                Text(tr("Save to Private Vault", "निजी वॉल्ट में सहेजें", "ব্যক্তিগত ভল্টে সংরক্ষণ করুন"))
                             }
 
                             OutlinedButton(
                                 onClick = onNavigateToReports,
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text(tr("View All Reports", "सभी रिपोर्ट देखें"))
+                                Text(tr("View All Reports", "सभी रिपोर्ट देखें", "সব রিপোর্ট দেখুন"))
                             }
                         }
                     }
