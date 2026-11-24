@@ -87,6 +87,10 @@ fun AiAssistantScreen(
         }
     }
 
+    LaunchedEffect(AppLanguage.current) {
+        viewModel.refreshWelcomeMessage()
+    }
+
     val quickPrompts = when (AppLanguage.current) {
         AppLang.HINDI -> listOf(
             "कोई मेरा पीछा कर रहा है।",
@@ -136,7 +140,6 @@ fun AiAssistantScreen(
                 .background(MaterialTheme.colorScheme.background)
                 .testTag("ai_assistant_screen")
         ) {
-            // Mandatory AI Tool Disclaimer Banner
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -157,9 +160,9 @@ fun AiAssistantScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = tr(
-                            "Notice: Raksha Assistant is an AI informational tool. It is NOT a replacement for emergency responders, police, legal advocates, or medical doctors. If in immediate danger, dial 112 below.",
-                            "सूचना: रक्षा असिस्टेंट एक AI सूचनात्मक टूल है। यह पुलिस, आपातकालीन सेवाओं, वकील या डॉक्टर का विकल्प नहीं है। तुरंत खतरे में हों तो 112 डायल करें।",
-                            "বিজ্ঞপ্তি: রক্ষা অ্যাসিস্ট্যান্ট একটি AI তথ্যমূলক টুল। এটি পুলিশ, জরুরি পরিষেবা, আইনজীবী বা ডাক্তারের বিকল্প নয়। তাৎক্ষণিক বিপদে থাকলে নিচে 112 ডায়াল করুন।"
+                            "Notice: Rakshak Assistant is an AI informational tool. It is NOT a replacement for emergency responders, police, legal advocates, or medical doctors. If in immediate danger, dial 112 below.",
+                            "सूचना: रक्षक असिस्टेंट एक AI सूचनात्मक टूल है। यह पुलिस, आपातकालीन सेवाओं, वकील या डॉक्टर का विकल्प नहीं है। तुरंत खतरे में हों तो 112 डायल करें।",
+                            "বিজ্ঞপ্তি: রক্ষক অ্যাসিস্ট্যান্ট একটি AI তথ্যমূলক টুল। এটি পুলিশ, জরুরি পরিষেবা, আইনজীবী বা ডাক্তারের বিকল্প নয়। তাৎক্ষণিক বিপদে থাকলে নিচে 112 ডায়াল করুন।"
                         ),
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -168,7 +171,6 @@ fun AiAssistantScreen(
                 }
             }
 
-            // Google Sign-In Status Bar (for Live Backend AI)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -253,7 +255,6 @@ fun AiAssistantScreen(
                 }
             }
 
-            // Quick Prompt Chips
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -271,7 +272,6 @@ fun AiAssistantScreen(
                 }
             }
 
-            // Message Stream
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -300,9 +300,9 @@ fun AiAssistantScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = tr(
-                                    "Raksha Assistant is evaluating safety guidance...",
-                                    "रक्षा असिस्टेंट सुरक्षा मार्गदर्शन तैयार कर रहा है...",
-                                    "রক্ষা অ্যাসিস্ট্যান্ট নিরাপত্তা নির্দেশিকা তৈরি করছে..."
+                                    "Rakshak Assistant is evaluating safety guidance...",
+                                    "रक्षक असिस्टेंट सुरक्षा मार्गदर्शन तैयार कर रहा है...",
+                                    "রক্ষক অ্যাসিস্ট্যান্ট নিরাপত্তা নির্দেশিকা তৈরি করছে..."
                                 ),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -312,7 +312,6 @@ fun AiAssistantScreen(
                 }
             }
 
-            // Bottom Input Bar
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -330,9 +329,9 @@ fun AiAssistantScreen(
                         placeholder = {
                             Text(
                                 tr(
-                                    "Ask Raksha Assistant for safety advice...",
-                                    "सुरक्षा सलाह के लिए पूछें...",
-                                    "নিরাপত্তা পরামর্শের জন্য জিজ্ঞাসা করুন..."
+                                    "Ask Rakshak Assistant for safety advice...",
+                                    "रक्षक से सुरक्षा सलाह के लिए पूछें...",
+                                    "রক্ষকের কাছে নিরাপত্তা পরামর্শ জিজ্ঞাসা করুন..."
                                 )
                             )
                         },

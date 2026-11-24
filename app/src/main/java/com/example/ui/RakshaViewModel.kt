@@ -42,7 +42,6 @@ class RakshaViewModel(application: Application) : AndroidViewModel(application) 
     val mediaHelper = MediaRecordingHelper(application)
     private val aiService = AiSafetyService()
 
-    // Google Auth state
     private val _googleIdToken = MutableStateFlow<String?>(null)
     val googleIdToken: StateFlow<String?> = _googleIdToken.asStateFlow()
 
@@ -68,7 +67,6 @@ class RakshaViewModel(application: Application) : AndroidViewModel(application) 
 
     private var sosCountdownJob: Job? = null
 
-    // Helplines
     private val _helplines = MutableStateFlow(VerifiedHelplines.list)
     val helplines: StateFlow<List<HelplineItem>> = _helplines.asStateFlow()
 
@@ -78,12 +76,12 @@ class RakshaViewModel(application: Application) : AndroidViewModel(application) 
     private val _selectedHelplineCategory = MutableStateFlow("All")
     val selectedHelplineCategory: StateFlow<String> = _selectedHelplineCategory.asStateFlow()
 
-    // AI Chat
     private val _chatMessages = MutableStateFlow<List<ChatMessage>>(
         listOf(
             ChatMessage(
+                id = "welcome",
                 sender = MessageSender.ASSISTANT,
-                text = "Namaste. I am Raksha Assistant. Your safety is my absolute priority.\n\nAsk me for safety guidance, legal reporting channels (POSH, POCSO, Cybercrime 1930), or evidence preservation tips.\n\n⚠️ In active danger, dial 112 immediately."
+                text = welcomeText()
             )
         )
     )
@@ -95,6 +93,19 @@ class RakshaViewModel(application: Application) : AndroidViewModel(application) 
     init {
         viewModelScope.launch {
             refreshLocation()
+        }
+    }
+
+    private fun welcomeText(): String = tr(
+        "Namaste. I am Rakshak. Your safety is my absolute priority.\n\nAsk me for safety guidance, legal reporting channels (POSH, POCSO, Cybercrime 1930), or evidence preservation tips.\n\n⚠️ In active danger, dial 112 immediately.",
+        "नमस्ते। मैं रक्षक हूँ। आपकी सुरक्षा मेरी सर्वोच्च प्राथमिकता है।\n\nमुझसे सुरक्षा मार्गदर्शन, कानूनी शिकायत के रास्ते (POSH, POCSO, साइबर क्राइम 1930) या सबूत सुरक्षित रखने के सुझाव पूछें।\n\n⚠️ वास्तविक खतरे में तुरंत 112 डायल करें।",
+        "নমস্কার। আমি রক্ষক। আপনার নিরাপত্তা আমার সর্বোচ্চ অগ্রাধিকার।\n\nআমাকে নিরাপত্তা নির্দেশনা, আইনি অভিযোগের পথ (POSH, POCSO, সাইবার ক্রাইম ১৯৩০) বা প্রমাণ সংরক্ষণের পরামর্শ জিজ্ঞাসা করুন।\n\n⚠️ সক্রিয় বিপদে তাৎক্ষণিক ১১২ ডায়াল করুন।"
+    )
+
+    fun refreshWelcomeMessage() {
+        val list = _chatMessages.value
+        if (list.isNotEmpty() && list.first().id == "welcome") {
+            _chatMessages.value = listOf(list.first().copy(text = welcomeText())) + list.drop(1)
         }
     }
 
@@ -130,7 +141,6 @@ class RakshaViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    // SOS Logic
     fun startSosCountdown(onTrigger: () -> Unit) {
         if (_sosState.value.isCountingDown) return
         EmergencyAlertHelper.triggerSosVibration(getApplication())
@@ -196,7 +206,6 @@ class RakshaViewModel(application: Application) : AndroidViewModel(application) 
         _sosState.value = _sosState.value.copy(customEmergencyMessage = message)
     }
 
-    // Contact Management
     fun addContact(name: String, phone: String, relationship: String, isPrimary: Boolean) {
         viewModelScope.launch {
             val contact = TrustedContact(
@@ -227,7 +236,6 @@ class RakshaViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    // Incident Logging
     fun saveIncidentReport(
         category: String,
         description: String,
@@ -259,7 +267,6 @@ class RakshaViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    // Helplines Filtering
     fun setHelplineCategory(category: String) {
         _selectedHelplineCategory.value = category
         filterHelplines()
@@ -284,7 +291,6 @@ class RakshaViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    // AI Safety Assistant Chat
     fun sendChatMessage(text: String) {
         if (text.isBlank()) return
         val currentHistory = _chatMessages.value
@@ -296,7 +302,8 @@ class RakshaViewModel(application: Application) : AndroidViewModel(application) 
             val assistantResponse = aiService.getSafetyGuidance(
                 userQuery = userMsg.text,
                 history = currentHistory,
-                idToken = _googleIdToken.value
+                idToken = _googleIdToken.value,
+                lang = AppLanguage.current.code
             )
             _chatMessages.value = _chatMessages.value + assistantResponse
             _isAiLoading.value = false

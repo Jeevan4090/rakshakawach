@@ -5,10 +5,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
-enum class AppLang(val label: String, val shortCode: String) {
-    ENGLISH("English", "EN"),
-    HINDI("हिन्दी", "हिं"),
-    BENGALI("বাংলা", "বাং")
+enum class AppLang(val label: String, val shortCode: String, val code: String) {
+    ENGLISH("English", "EN", "en"),
+    HINDI("हिन्दी", "हिं", "hi"),
+    BENGALI("বাংলা", "বাং", "bn")
 }
 
 object AppLanguage {
