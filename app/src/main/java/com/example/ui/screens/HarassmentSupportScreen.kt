@@ -83,7 +83,6 @@ fun HarassmentSupportScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // Immediate 112 Dial
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -107,17 +106,17 @@ fun HarassmentSupportScreen(
                     }
 
                     Button(
-                        onClick = { EmergencyAlertHelper.dialNumber(context, "181") },
+                        onClick = { EmergencyAlertHelper.dialNumber(context, "1091") },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9333EA)),
                         modifier = Modifier
                             .weight(1f)
                             .height(50.dp)
-                            .testTag("harassment_dial_181_button")
+                            .testTag("harassment_dial_1091_button")
                     ) {
                         Icon(Icons.Default.Shield, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = tr("181 WOMEN HELPLINE", "181 महिला हेल्पलाइन", "181 মহিলা হেল্পলাইন"),
+                            text = tr("1091 WOMEN HELPLINE", "1091 महिला हेल्पलाइन", "1091 মহিলা হেল্পলাইন"),
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp
                         )
@@ -125,7 +124,6 @@ fun HarassmentSupportScreen(
                 }
             }
 
-            // Supportive, Non-judgmental Message
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -158,7 +156,6 @@ fun HarassmentSupportScreen(
                 }
             }
 
-            // Evidence Preservation Guidance Card
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -199,7 +196,6 @@ fun HarassmentSupportScreen(
                 }
             }
 
-            // Confidential Local Incident Report Form
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),

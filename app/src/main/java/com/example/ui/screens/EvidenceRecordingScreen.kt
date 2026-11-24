@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import android.Manifest
+import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.RepeatMode
@@ -62,6 +63,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
 import com.example.ui.RakshaViewModel
 import com.example.ui.components.RakshaTopAppBar
 import com.example.ui.theme.CrimsonPrimary
@@ -79,17 +81,28 @@ fun EvidenceRecordingScreen(
 ) {
     val context = LocalContext.current
     val audioState by viewModel.mediaHelper.audioState.collectAsState()
-    var selectedTab by remember { mutableIntStateOf(0) } // 0: Audio SOS, 1: Video SOS
+    var selectedTab by remember { mutableIntStateOf(0) }
 
     var audioFiles by remember { mutableStateOf(emptyList<File>()) }
     var videoFiles by remember { mutableStateOf(emptyList<File>()) }
+    var pendingVideoFile by remember { mutableStateOf<File?>(null) }
+
+    fun videoDir(): File = File(context.filesDir, "video_evidence").apply { mkdirs() }
 
     fun refreshFiles() {
         audioFiles = viewModel.mediaHelper.listRecordedAudioFiles()
-        videoFiles = viewModel.mediaHelper.listRecordedVideoFiles()
+        videoFiles = videoDir()
+            .listFiles()
+            ?.filter { it.isFile && it.length() > 0 }
+            ?.sortedByDescending { it.lastModified() }
+            ?: emptyList()
     }
 
     LaunchedEffect(audioState.isRecording) {
+        refreshFiles()
+    }
+
+    LaunchedEffect(Unit) {
         refreshFiles()
     }
 
@@ -101,10 +114,30 @@ fun EvidenceRecordingScreen(
         }
     }
 
+    val videoCaptureLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CaptureVideo()
+    ) { success ->
+        if (!success) {
+            pendingVideoFile?.delete()
+        }
+        pendingVideoFile = null
+        refreshFiles()
+    }
+
+    fun launchVideoCapture() {
+        val stamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val file = File(videoDir(), "VID_$stamp.mp4")
+        pendingVideoFile = file
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+        videoCaptureLauncher.launch(uri)
+    }
+
     val videoPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        // Handle video permission
+        if (permissions[Manifest.permission.CAMERA] == true) {
+            launchVideoCapture()
+        }
     }
 
     val pulseTransition = rememberInfiniteTransition(label = "pulse_record")
@@ -139,7 +172,6 @@ fun EvidenceRecordingScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // Legal Transparency & Platform Rule Compliance Banner
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -171,7 +203,6 @@ fun EvidenceRecordingScreen(
                 }
             }
 
-            // Tab Selector: Audio SOS vs Video SOS
             item {
                 TabRow(
                     selectedTabIndex = selectedTab,
@@ -205,7 +236,6 @@ fun EvidenceRecordingScreen(
             }
 
             if (selectedTab == 0) {
-                // AUDIO SOS RECORDER CARD
                 item {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
@@ -236,7 +266,6 @@ fun EvidenceRecordingScreen(
 
                             Spacer(modifier = Modifier.height(10.dp))
 
-                            // Recording Visual Indicator & Duration
                             Box(
                                 contentAlignment = Alignment.Center,
                                 modifier = Modifier
@@ -269,7 +298,6 @@ fun EvidenceRecordingScreen(
                                 }
                             }
 
-                            // Timer Display
                             val minutes = audioState.durationSeconds / 60
                             val seconds = audioState.durationSeconds % 60
                             val timeStr = String.format("%02d:%02d", minutes, seconds)
@@ -338,7 +366,6 @@ fun EvidenceRecordingScreen(
                     }
                 }
 
-                // Saved Audio Evidence List
                 item {
                     Text(
                         text = tr(
@@ -379,7 +406,6 @@ fun EvidenceRecordingScreen(
                     }
                 }
             } else {
-                // VIDEO SOS CARD
                 item {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
@@ -459,6 +485,57 @@ fun EvidenceRecordingScreen(
                                 )
                             }
                         }
+                    }
+                }
+
+                item {
+                    Text(
+                        text = tr(
+                            "SAVED VIDEO EVIDENCE FILES (${videoFiles.size})",
+                            "सहेजी गई वीडियो फ़ाइलें (${videoFiles.size})",
+                            "সংরক্ষিত ভিডিও ফাইল (${videoFiles.size})"
+                        ),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        letterSpacing = 1.sp,
+                        modifier = Modifier.padding(top = 10.dp)
+                    )
+                }
+
+                if (videoFiles.isEmpty()) {
+                    item {
+                        Text(
+                            text = tr(
+                                "No video evidence recorded yet.",
+                                "अभी तक कोई वीडियो सबूत रिकॉर्ड नहीं किया गया है।",
+                                "এখনো কোনো ভিডিও প্রমাণ রেকর্ড করা হয়নি।"
+                            ),
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+                } else {
+                    items(videoFiles) { file ->
+                        MediaFileCard(
+                            file = file,
+                            isVideo = true,
+                            isPlaying = false,
+                            onPlayToggle = {
+                                val uri = FileProvider.getUriForFile(
+                                    context,
+                                    "${context.packageName}.fileprovider",
+                                    file
+                                )
+                                context.startActivity(
+                                    Intent(Intent.ACTION_VIEW)
+                                        .setDataAndType(uri, "video/mp4")
+                                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                )
+                            },
+                            onShare = { viewModel.shareRecordedFile(file) }
+                        )
                     }
                 }
             }

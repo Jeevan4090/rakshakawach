@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.HealthAndSafety
 import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -147,21 +148,21 @@ fun AssaultSupportScreen(
                                 )
                             }
                             Button(
-                                onClick = { EmergencyAlertHelper.dialNumber(context, "108") },
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFEF2F2)),
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(48.dp)
-                                    .testTag("assault_call_108_button")
-                            ) {
-                                Icon(Icons.Default.LocalHospital, contentDescription = null, tint = CrimsonPrimary)
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = tr("DIAL 108", "108 डायल करें", "108 ডায়াল করুন"),
-                                    color = CrimsonPrimary,
-                                    fontWeight = FontWeight.Black
-                                )
-                            }
+    onClick = { EmergencyAlertHelper.dialNumber(context, "181") },
+    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFEF2F2)),
+    modifier = Modifier
+        .weight(1f)
+        .height(48.dp)
+        .testTag("assault_call_181_button")
+) {
+    Icon(Icons.Default.Shield, contentDescription = null, tint = CrimsonPrimary)
+    Spacer(modifier = Modifier.width(4.dp))
+    Text(
+        text = tr("DIAL 181", "181 डायल करें", "181 ডায়াল করুন"),
+        color = CrimsonPrimary,
+        fontWeight = FontWeight.Black
+    )
+}
                         }
                     }
                 }
